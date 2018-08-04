@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>Web Scraping using Rvest</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Prasad's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="DA5020.P1.Raut.html">XML Data Extraction</a>
+</li>
+<li>
+  <a href="DA5020.Raut.A7.html">Web Scraping</a>
+</li>
+<li>
+  <a href="about.html">About Me</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Web Scraping using Rvest</h1>
+
+</div>
+
+
+<div id="redo-problem-1-but-using-rvest-or-direct-parsing-of-the-the-html-in-r-rather-than-an-external-toolkit.-as-in-the-problem-save-your-result-as-a-csv.-make-sure-it-matches-the-csv-from-problem-1.-you-may-use-any-parsing-method-in-r-to-solve-this-problem-and-scrape-the-data." class="section level1">
+<h1>Redo problem 1 but using rvest or direct parsing of the the HTML in R rather than an external toolkit. As in the problem, save your result as a CSV. Make sure it matches the CSV from problem 1. You may use any parsing method in R to solve this problem and scrape the data.</h1>
+<pre class="r"><code># Installing the &quot;rvest&quot; package from the R console. Using the library() function to load the rvest package into the R session. 
+library(tidyverse)
+library(rvest)</code></pre>
+<pre class="r"><code># Using map_df() function to parse and scrape data from the first three pages(indicated by 0, 30, and 60) of search results for burgers on Yelp website. The search filter is limited to Boston neighborhoods of Allston, Brighton, Back Bay, Beacon Hill, Downtown Area, Fenway, South End, and West End. 
+yelpburgers &lt;- map_df(c(0, 30, 60), function(i) {
+  # Using cat() function to print &quot;:)&quot; as a progress indicator indicating success in parsing each page URL when scraping the data from Yelp website.
+  cat(&quot;:)&quot;)
+  #  Using read_html() with paste0() function to read the data to be scraped from the URLs of first three pages of the search result. 
+  pg &lt;- read_html(paste0(&quot;https://www.yelp.com/search?find_desc=Burgers&amp;start=&quot;,i,&quot;&amp;l=p:MA:Boston::%5BAllston/Brighton,Back_Bay,Beacon_Hill,Downtown,Fenway,South_End,West_End%5D&quot;))
+  # Using the data.frame() function to create a data frame of the data scraped from the Yelp website. Using html_text() with html_nodes() function to get names of restaurant from an HTML node using a CSS selector.
+  data.frame(RestaurantName = html_text(html_nodes(pg, css = &quot;.indexed-biz-name .js-analytics-click&quot;)),
+             # Using html_text() with html_nodes() function to get the review counts, service categories, and addresses of restaurants from an HTML node using a CSS selector. Using gsub() function to remove additional white spaces in the resulting text data. The additional White spaces are detected by using the regular expression &quot;\\s+&quot; and are replaced by a single space &quot; &quot;.
+             ReviewCount = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .rating-qualifier&quot;))),
+             ServiceCategories = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .category-str-list&quot;))),
+             Address = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .secondary-attributes :nth-child(2)&quot;))),
+             # Using html_attr() with html_nodes() function to get the &quot;title&quot; attribute of the HTML node using CSS selector for average review stars.
+             AverageReviewStars = html_attr(html_nodes(pg, css = &quot;.natural-search-result .rating-large&quot;), &quot;title&quot;),
+             # Setting the argument stringsAsFactors as False to avoid coverting string values to factor.
+             stringsAsFactors = F) 
+}) %&gt;%
+  # Using rowid_to_column() function to assign a unique ID for each row in yelpburgers data frame. Using a pipe operator(%&gt;%) to chain it to map_df() function.
+  rowid_to_column(&quot;RowID&quot;) </code></pre>
+<pre><code>## :):):)</code></pre>
+<pre class="r"><code># Using head() function to display the first 10 rows of the yelpburgers data frame.
+head(yelpburgers, n = 10)</code></pre>
+<pre><code>##    RowID                 RestaurantName   ReviewCount
+## 1      1                   Tasty Burger  993 reviews 
+## 2      2                    Wahlburgers  537 reviews 
+## 3      3                    Shake Shack  314 reviews 
+## 4      4                        UBurger  154 reviews 
+## 5      5                    The Gallows  788 reviews 
+## 6      6 MOOYAH Burgers, Fries &amp; Shakes   35 reviews 
+## 7      7                           Coda  555 reviews 
+## 8      8                5 Napkin Burger  646 reviews 
+## 9      9                      Jm Curley  724 reviews 
+## 10    10                     The Avenue  331 reviews 
+##                                               ServiceCategories
+## 1                                 Burgers, Hot Dogs, Fast Food 
+## 2                              American (Traditional), Burgers 
+## 3                                 Burgers, Fast Food, Hot Dogs 
+## 4                                                      Burgers 
+## 5                        Burgers, Bars, American (Traditional) 
+## 6   Burgers, American (Traditional), Ice Cream &amp; Frozen Yogurt 
+## 7                       American (New), Burgers, Cocktail Bars 
+## 8                                                      Burgers 
+## 9                                      American (New), Lounges 
+## 10        American (Traditional), Beer Bar, Tapas/Small Plates 
+##             Address AverageReviewStars
+## 1   (617) 425-4444     4.0 star rating
+## 2   (617) 927-6810     3.5 star rating
+## 3   (617) 933-5050     3.5 star rating
+## 4   (617) 487-4855     4.0 star rating
+## 5   (617) 425-0200     4.0 star rating
+## 6   (857) 277-0176     4.0 star rating
+## 7   (617) 536-2632     4.0 star rating
+## 8   (617) 375-2277     3.0 star rating
+## 9   (617) 338-5333     4.0 star rating
+## 10  (617) 903-3110     4.0 star rating</code></pre>
+<pre class="r"><code># Using write.csv() function to export the scraped data to a csv file named &quot;rvest.csv&quot;. 
+write.csv(yelpburgers, file = &quot;rvest.csv&quot;, row.names = F)</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

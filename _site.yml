@@ -1,12 +1,14 @@
-name: "prasads-website"
+name: "Prasad's website"
 output_dir: "."
 navbar:
   title: "Prasad's Website"
   left:
     - text: "Home"
       href: index.html
-    - text: "Projects"     ##### the new
-      href: DA5020.P1.Raut.nb.html  ##### stuff
+    - text: "XML Data Extraction"     ##### the new
+      href: DA5020.P1.Raut.html  ##### stuff
+    - text: "Web Scraping"     ##### the new
+      href: DA5020.Raut.A7.html  ##### stuff
     - text: "About Me"
       href: about.html
 output:
