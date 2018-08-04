@@ -2,4 +2,8 @@
 title: "About Me"
 ---
 
-Why I am an idiot.
+- __Name:__ Prasad Raut
+- __Ocupation:__ "Student"
+- __Hobbies:__ Learning about Data science. 
+ 
+![](Me.jpg)

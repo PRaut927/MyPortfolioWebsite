@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title>DA5020 ~ Practicum 1 ~ Prasad Raut</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 60px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+
+.section h2 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h3 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h4 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h5 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+.section h6 {
+  padding-top: 65px;
+  margin-top: -65px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Prasad's Website</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="DA5020.P1.Raut.nb.html">Projects</a>
+</li>
+<li>
+  <a href="about.html">About Me</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">DA5020 ~ Practicum 1 ~ Prasad Raut</h1>
+
+</div>
+
+
+<div id="task-1" class="section level1">
+<h1>Task 1</h1>
+<p>(0 pts) Download the PubMed excerpt data set (XML). Load the XML file into a browser or text editing tool and inspect it. Explore the data set as you see fit and that allows you to get a sense of the data and get comfortable with it.</p>
+<pre class="r"><code># Installing the required packages using install.packages() function from the console and loading those packages into the R session using library() function.
+library(XML)
+library(RCurl)
+library(tidyverse)
+library(plyr)</code></pre>
+<pre class="r"><code># Using getURL() function to download the XML file from a URL.
+xData &lt;- getURL(&quot;https://da5020.weebly.com/uploads/8/6/5/9/8659576/pubmedsample.jun18.xml&quot;)
+# Using xmlParse() function to extract data from an XML file and store it as an XML document named pubmed in R. Setting the root node for pubmed using xmlRoot() function.
+pubmed&lt;- xmlRoot(xmlParse(xData), useInternalNodes = TRUE) 
+# Examining the first record from the pubmed XML document.
+pubmed[[1]]</code></pre>
+<pre><code>## &lt;PubmedArticle&gt;
+##   &lt;MedlineCitation Status=&quot;MEDLINE&quot; Owner=&quot;NLM&quot;&gt;
+##     &lt;PMID Version=&quot;1&quot;&gt;973217&lt;/PMID&gt;
+##     &lt;DateCompleted&gt;
+##       &lt;Year&gt;1976&lt;/Year&gt;
+##       &lt;Month&gt;12&lt;/Month&gt;
+##       &lt;Day&gt;03&lt;/Day&gt;
+##     &lt;/DateCompleted&gt;
+##     &lt;DateRevised&gt;
+##       &lt;Year&gt;2002&lt;/Year&gt;
+##       &lt;Month&gt;11&lt;/Month&gt;
+##       &lt;Day&gt;13&lt;/Day&gt;
+##     &lt;/DateRevised&gt;
+##     &lt;Article PubModel=&quot;Print&quot;&gt;
+##       &lt;Journal&gt;
+##         &lt;ISSN IssnType=&quot;Print&quot;&gt;0095-3814&lt;/ISSN&gt;
+##         &lt;JournalIssue CitedMedium=&quot;Print&quot;&gt;
+##           &lt;Volume&gt;3&lt;/Volume&gt;
+##           &lt;Issue&gt;1&lt;/Issue&gt;
+##           &lt;PubDate&gt;
+##             &lt;Year&gt;1976&lt;/Year&gt;
+##             &lt;Season&gt;Fall&lt;/Season&gt;
+##           &lt;/PubDate&gt;
+##         &lt;/JournalIssue&gt;
+##         &lt;Title&gt;Topics in health care financing&lt;/Title&gt;
+##         &lt;ISOAbbreviation&gt;Top Health Care Financ&lt;/ISOAbbreviation&gt;
+##       &lt;/Journal&gt;
+##       &lt;ArticleTitle&gt;Hospital debt management and cost reimbursement.&lt;/ArticleTitle&gt;
+##       &lt;Pagination&gt;
+##         &lt;MedlinePgn&gt;69-81&lt;/MedlinePgn&gt;
+##       &lt;/Pagination&gt;
+##       &lt;AuthorList CompleteYN=&quot;Y&quot;&gt;
+##         &lt;Author ValidYN=&quot;Y&quot;&gt;
+##           &lt;LastName&gt;Blume&lt;/LastName&gt;
+##           &lt;ForeName&gt;F R&lt;/ForeName&gt;
+##           &lt;Initials&gt;FR&lt;/Initials&gt;
+##         &lt;/Author&gt;
+##       &lt;/AuthorList&gt;
+##       &lt;Language&gt;eng&lt;/Language&gt;
+##       &lt;PublicationTypeList&gt;
+##         &lt;PublicationType UI=&quot;D016428&quot;&gt;Journal Article&lt;/PublicationType&gt;
+##       &lt;/PublicationTypeList&gt;
+##     &lt;/Article&gt;
+##     &lt;MedlineJournalInfo&gt;
+##       &lt;Country&gt;United States&lt;/Country&gt;
+##       &lt;MedlineTA&gt;Top Health Care Financ&lt;/MedlineTA&gt;
+##       &lt;NlmUniqueID&gt;7509107&lt;/NlmUniqueID&gt;
+##       &lt;ISSNLinking&gt;0095-3814&lt;/ISSNLinking&gt;
+##     &lt;/MedlineJournalInfo&gt;
+##     &lt;CitationSubset&gt;IM&lt;/CitationSubset&gt;
+##     &lt;MeshHeadingList&gt;
+##       &lt;MeshHeading&gt;
+##         &lt;DescriptorName UI=&quot;D000066&quot; MajorTopicYN=&quot;N&quot;&gt;Accounting&lt;/DescriptorName&gt;
+##       &lt;/MeshHeading&gt;
+##       &lt;MeshHeading&gt;
+##         &lt;DescriptorName UI=&quot;D004469&quot; MajorTopicYN=&quot;Y&quot;&gt;Economics, Hospital&lt;/DescriptorName&gt;
+##       &lt;/MeshHeading&gt;
+##       &lt;MeshHeading&gt;
+##         &lt;DescriptorName UI=&quot;D006739&quot; MajorTopicYN=&quot;Y&quot;&gt;Hospital Administration&lt;/DescriptorName&gt;
+##       &lt;/MeshHeading&gt;
+##       &lt;MeshHeading&gt;
+##         &lt;DescriptorName UI=&quot;D014481&quot; MajorTopicYN=&quot;N&quot; Type=&quot;Geographic&quot;&gt;United States&lt;/DescriptorName&gt;
+##       &lt;/MeshHeading&gt;
+##     &lt;/MeshHeadingList&gt;
+##   &lt;/MedlineCitation&gt;
+##   &lt;PubmedData&gt;
+##     &lt;History&gt;
+##       &lt;PubMedPubDate PubStatus=&quot;pubmed&quot;&gt;
+##         &lt;Year&gt;1976&lt;/Year&gt;
+##         &lt;Month&gt;1&lt;/Month&gt;
+##         &lt;Day&gt;1&lt;/Day&gt;
+##       &lt;/PubMedPubDate&gt;
+##       &lt;PubMedPubDate PubStatus=&quot;medline&quot;&gt;
+##         &lt;Year&gt;1976&lt;/Year&gt;
+##         &lt;Month&gt;1&lt;/Month&gt;
+##         &lt;Day&gt;1&lt;/Day&gt;
+##         &lt;Hour&gt;0&lt;/Hour&gt;
+##         &lt;Minute&gt;1&lt;/Minute&gt;
+##       &lt;/PubMedPubDate&gt;
+##       &lt;PubMedPubDate PubStatus=&quot;entrez&quot;&gt;
+##         &lt;Year&gt;1976&lt;/Year&gt;
+##         &lt;Month&gt;1&lt;/Month&gt;
+##         &lt;Day&gt;1&lt;/Day&gt;
+##         &lt;Hour&gt;0&lt;/Hour&gt;
+##         &lt;Minute&gt;0&lt;/Minute&gt;
+##       &lt;/PubMedPubDate&gt;
+##     &lt;/History&gt;
+##     &lt;PublicationStatus&gt;ppublish&lt;/PublicationStatus&gt;
+##     &lt;ArticleIdList&gt;
+##       &lt;ArticleId IdType=&quot;pubmed&quot;&gt;973217&lt;/ArticleId&gt;
+##     &lt;/ArticleIdList&gt;
+##   &lt;/PubmedData&gt;
+## &lt;/PubmedArticle&gt;</code></pre>
+</div>
+<div id="task-2" class="section level1">
+<h1>Task 2</h1>
+<p>(30 pts) Load the data into R and create two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Only load the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Load this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Also, exclude any journals that do not have an ISSN as the primary key cannot be empty.</p>
+<pre class="r"><code># Using function() function to create the xmlToColumn() function which takes an argument named path containin the path of node in XML document. This function will be used to extract the data from the pubmed xml document into columns for creating tibbles.
+xmlToColumn &lt;- function(path){
+  # Using xpathSApply() function to set the path to the nodes from pubmed XML document. 
+  xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) {
+    # Using length() function with if statement to check if the path exists.
+    if(length(xpathSApply(x, path)) != 0) {
+      # Using xpathSApply() function to get the value from the XML node specified by the path.
+      xpathSApply(x, path, xmlValue)
+      } 
+    # Using else statement to put NA values if the node is missing.
+    else {
+        NA
+        }
+    })
+}
+
+# Creating the publication tibble:
+
+# Using xpathSApply() to get the PMID values from the nodes specified by the given path. Converting the PMID values to integer using as.integer() function.
+PMID &lt;- as.integer(xpathSApply(pubmed, &#39;//PubmedArticle/MedlineCitation/PMID&#39;, xmlValue, simplify = TRUE))
+
+# Creating the ISSN variable using xmlToColumn() function.
+ISSN &lt;- xmlToColumn(&quot;./Article/Journal/ISSN&quot;)
+# Creating the Publication_year variable using xmlToColum() function.
+Publication_year &lt;- xmlToColumn(&quot;./Article/Journal/JournalIssue/PubDate/Year&quot;)
+# Combining the ISSN and the Publication_year to form a foreign key for publication tibble and a primary key for journal tibble using paste() function.
+ISSN &lt;- paste(ISSN, Publication_year, sep = &quot;.&quot;) 
+
+# Creating the Date_completed variable using xmlToColumn() function. 
+Date_completed &lt;- xmlToColumn(&quot;./DateCompleted&quot;)
+# Using str_replace() function to add &quot;-&quot; between year, month, and day of DateComplete values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateComplete.
+Date_completed &lt;- as.Date(str_replace(Date_completed,&quot;(\\d{4})(\\d{2})(\\d{2})$&quot;,&quot;\\1-\\2-\\3&quot;))
+
+# Creating the Date_revised variable using xmlToColumn() function.
+Date_revised &lt;- xmlToColumn(&quot;./DateRevised&quot;)
+# Using str_replace() function to add &quot;-&quot; between year, month, and day of DateRevised values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateRevised.
+Date_revised &lt;- as.Date(str_replace(Date_revised,&quot;(\\d{4})(\\d{2})(\\d{2})$&quot;,&quot;\\1-\\2-\\3&quot;))
+
+# Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the number of authors.
+Number_of_authors &lt;- xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) {
+  # Using length() function with if statement to check if the path exists for getting the authors.
+  if(length(xpathSApply(x, &quot;./Article/AuthorList&quot;)) != 0) {
+    # Using xpathSApply() function to get the authors from the Author XML node specified by the path. Using the count() from plyr package and nrow() functions to count the number of authors in each node.
+    nrow(plyr::count(xpathSApply(x, &quot;./Article/AuthorList/Author&quot;,xmlValue)))
+  }
+  # Using else statement to put NA values if the Authors are missing.
+  else {
+    NA
+  }
+})
+
+# Creating the Publication_type variable using xmlToColumn() function.
+Publication_type &lt;- xmlToColumn(&quot;./Article/PublicationTypeList/PublicationType&quot;)
+# Using sapply() function to extract only the first element of all elements in the list Publication_type and storing it back as a vector.
+Publication_type &lt;- sapply(1:length(Publication_type), function(x) Publication_type[[x]][1])
+
+# Creating the Article_title variable using xmlToColumn() function.
+Article_title &lt;- xmlToColumn(&quot;./Article/ArticleTitle&quot;)
+# Using data_frame() function to add the specified variables as columns to the publication tibble.
+(publication &lt;- data_frame(PMID, ISSN, Date_completed, Date_revised, Number_of_authors, Publication_type, Article_title))</code></pre>
+<pre><code>## # A tibble: 177 x 7
+##       PMID ISSN           Date_completed Date_revised Number_of_authors
+##      &lt;int&gt; &lt;chr&gt;          &lt;date&gt;         &lt;date&gt;                   &lt;int&gt;
+##  1  973217 0095-3814.1976 1976-12-03     2002-11-13                   1
+##  2 1669026 0377-8231.1991 1993-11-15     2008-11-21                  NA
+##  3 1875346 0022-2623.1991 1991-09-25     2013-11-21                  10
+##  4 5757641 NA.1968        1970-03-22     2003-11-14                   1
+##  5 3549656 0021-8820.1987 1987-05-15     2014-11-20                   6
+##  6 8119288 0014-2956.1994 1994-04-01     2016-10-17                   2
+##  7 8219565 1051-0443.NA   1993-12-08     2016-11-23                   4
+##  8 8655018 0017-0011.1996 1996-07-30     2017-03-03                   2
+##  9 8863847 0026-895X.1996 1996-11-25     2014-11-20                   5
+## 10 9110943 1059-2725.1996 1996-10-23     2011-11-17                   4
+## # ... with 167 more rows, and 2 more variables: Publication_type &lt;chr&gt;,
+## #   Article_title &lt;chr&gt;</code></pre>
+<pre class="r"><code># Using View() function to display the created publication tibble in the R Data Viewer.
+View(publication)</code></pre>
+<pre class="r"><code># Creating the Journal tibble:
+
+# Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the Medium of the journals.
+Medium &lt;- xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) {
+  # Using length() function with if statement to check if the path exists for getting the Medium from the Journal Issue nodes.
+  if(length(xpathSApply(x, &quot;./Article/Journal/JournalIssue&quot;)) != 0) {
+    # Using xpathSApply() function to get the attribute CitedMedium from the JournalIssue XML node specified by the given path.
+    xpathSApply(x, &quot;./Article/Journal/JournalIssue&quot;, xmlGetAttr, &quot;CitedMedium&quot;)
+  } 
+  # Using else statement to put NA values if the Authors are missing.
+  else {
+    NA
+  }
+})
+
+# Creating the Publication_season variable using xmlToColumn() function.
+Publication_season &lt;- xmlToColumn(&quot;./Article/Journal/JournalIssue/PubDate/Season&quot;)
+
+# Creating the Language variable using xmlToColumn() function.
+Language &lt;- xmlToColumn(&quot;./Article/Language&quot;)
+# Using sapply() function to extract only the first element of all elements in the variable Language and storing it back as a vector.
+Language &lt;- sapply(1:length(Language), function(x) Language[[x]][1])
+
+# Creating the Journal_title variable using xmlToColumn() function.
+Journal_title &lt;- xmlToColumn(&quot;./Article/Journal/Title&quot;)
+
+# Using data_frame() function to add the specified variables as columns to the journal tibble.  
+journal &lt;- data_frame(ISSN, Medium, Publication_year, Publication_season, Language, Journal_title)
+# Removing all the ISSN values which are NA using filter() with substring() function and eliminating the duplicate rows from the journal tibble using the unique() function.
+(journal &lt;- base::unique(filter(journal, substring(ISSN, 1, 2) != &quot;NA&quot;)))</code></pre>
+<pre><code>## # A tibble: 150 x 6
+##    ISSN   Medium Publication_year Publication_sea~ Language Journal_title 
+##    &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;         
+##  1 0095-~ Print  1976             Fall             eng      Topics in hea~
+##  2 0377-~ Print  1991             &lt;NA&gt;             fre      Bulletin et m~
+##  3 0022-~ Print  1991             &lt;NA&gt;             eng      Journal of me~
+##  4 0021-~ Print  1987             &lt;NA&gt;             eng      The Journal o~
+##  5 0014-~ Print  1994             &lt;NA&gt;             eng      European jour~
+##  6 1051-~ Print  &lt;NA&gt;             &lt;NA&gt;             eng      Journal of va~
+##  7 0017-~ Print  1996             &lt;NA&gt;             pol      Ginekologia p~
+##  8 0026-~ Print  1996             &lt;NA&gt;             eng      Molecular pha~
+##  9 1059-~ Print  1996             &lt;NA&gt;             eng      The Online jo~
+## 10 0009-~ Print  1996             &lt;NA&gt;             eng      Circulation   
+## # ... with 140 more rows</code></pre>
+<pre class="r"><code># Using View() function to display the created journal tibble in the R Data Viewer.
+View(journal)</code></pre>
+</div>
+<div id="task-3" class="section level1">
+<h1>Task 3</h1>
+<p>(10 pts) Create a line graph of the number of publications per year.</p>
+<pre class="r"><code># Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publication years with their respective Publications.
+lg &lt;- inner_join(publication, journal, by = &quot;ISSN&quot;) 
+# Using table() function to get the frequency of publications each year. Converting the table to data frame named linegraph using as.data.frame() function.
+linegraph &lt;- as.data.frame(table(lg$Publication_year))
+
+# Using ggplot() function to create a line graph of number of publications per year for the linegraph data frame.
+ggplot(data = linegraph, aes(x = Var1, y = Freq, group = 1)) +
+  geom_line(color = &quot;red&quot;) + geom_point() + 
+  ggtitle(&quot;Number of Publications per Year&quot;) + xlab(&quot;Years&quot;) + ylab(&quot;Publications&quot;) + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
+<p><img src="DA5020.P1.Raut_files/figure-html/Task%203-1.png" width="672" /></p>
+</div>
+<div id="task-4" class="section level1">
+<h1>Task 4</h1>
+<p>(10 pts) Create a histogram of the number of publication per journal.</p>
+<pre class="r"><code># Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publications with their respective journal titles.  
+hist&lt;- inner_join(publication, journal, by = &quot;ISSN&quot;) 
+
+# Using ggplot() and geom_bar() functions to create a histogram of the number of publication per journal.
+ggplot(hist, aes(x = Journal_title, color = Journal_title)) + geom_bar() + ggtitle(&quot;Number of Publications per Journal&quot;) +  xlab(&quot;Journals&quot;)  + ylab(&quot;Publications&quot;) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = &quot;none&quot;)</code></pre>
+<p><img src="DA5020.P1.Raut_files/figure-html/Task%204-1.png" width="672" /></p>
+</div>
+<div id="task-5" class="section level1">
+<h1>Task 5</h1>
+<p>(10 pts) Find the article that had the most number of authors and list the article, journal, and number of authors.</p>
+<pre class="r"><code># Using filter() function to get the article having the most number of authors.
+filter(publication, Number_of_authors == max(Number_of_authors, na.rm = T)) %&gt;%
+  # Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate article titles with their respective journal titles.
+  inner_join(journal, by = &quot;ISSN&quot;) %&gt;%
+  # Using select() function to list the columns containing article, journal, and number of authors.
+  select(&quot;Article&quot; = Article_title, &quot;Journal&quot; = Journal_title, &quot;Number of Authors&quot; = Number_of_authors)</code></pre>
+<pre><code>## # A tibble: 1 x 3
+##   Article                                Journal         `Number of Autho~
+##   &lt;chr&gt;                                  &lt;chr&gt;                       &lt;int&gt;
+## 1 Measurement of B --&gt; K*gamma branchin~ Physical revie~               621</code></pre>
+</div>
+<div id="task-6" class="section level1">
+<h1>Task 6</h1>
+<p>(10 pts) Find the average number of authors for articles. Display a single number.</p>
+<pre class="r"><code># Using summarize() with mean() function to get the average number of authors for articles. Using round() function to display a single number.
+summarize(publication, &quot;Average Number of Authors&quot; = round(mean(Number_of_authors, na.rm = T), digits = 0))</code></pre>
+<pre><code>##   Average Number of Authors
+## 1                        10</code></pre>
+</div>
+<div id="task-7" class="section level1">
+<h1>Task 7</h1>
+<p>(10 pts) What is the shortest and the longest time periods between date completed and date revised. Display the time elapsed in days. Only consider cases where the difference is a positive number.</p>
+<pre class="r"><code># Calculating the time difference in days between the date revised and date completed.
+timediff &lt;- (publication$Date_revised - publication$Date_completed)
+# Using which() function to remove the time difference which is a negative number. 
+timediff &lt;- timediff[timediff &gt; 0]
+# Using min() function to get the shortest time periods between date completed and date revised. 
+min(timediff, na.rm = T)</code></pre>
+<pre><code>## Time difference of 4 days</code></pre>
+<pre class="r"><code># Using max() function to get the longest time periods between date completed and date revised.
+max(timediff, na.rm = T)</code></pre>
+<pre><code>## Time difference of 14755 days</code></pre>
+</div>
+<div id="task-8" class="section level1">
+<h1>Task 8</h1>
+<p>(10 pts) In how many different languages are the articles published in PubMed? Note that this will actually give an incorrect answer because the tibble only contains the first language of publication.</p>
+<pre class="r"><code># Using unique() function to get different languages of articles published in PubMed.
+(lang &lt;- unique(journal$Language))</code></pre>
+<pre><code>##  [1] &quot;eng&quot; &quot;fre&quot; &quot;pol&quot; &quot;spa&quot; &quot;rus&quot; &quot;swe&quot; &quot;dut&quot; &quot;chi&quot; &quot;ita&quot; &quot;kor&quot;</code></pre>
+<pre class="r"><code># Using length() function to count the different languages of articles published in PubMed.
+length(lang)</code></pre>
+<pre><code>## [1] 10</code></pre>
+</div>
+<div id="task-9" class="section level1">
+<h1>Task 9</h1>
+<p>(20 pts) Using the XML data (not the tibbles created above), inspect the abstract text fields and find how many articles contained the words “in vitro”, “drug resistance”, “virus”, “transmission”, “clinical study” in any capitalization in any abstract section. Note that drug resistance could be spelled as “drug resistance” or “drug-resistance” or “drug resistant” or “drug resistent” – use regular expressions to deal with the variation.</p>
+<pre class="r"><code># Creating the abstract list containing the abstracts for all publications using the xmlToColumn() function. 
+abstract &lt;- xmlToColumn(&quot;./Article/Abstract/AbstractText&quot;)
+# Using head() function to examine the first few elements of the list abstract.
+head(abstract)</code></pre>
+<pre><code>## [[1]]
+## [1] NA
+## 
+## [[2]]
+## [1] NA
+## 
+## [[3]]
+## [1] &quot;Modification of the hexahydronaphthalene ring 5-position in simvastatin 2a via oxygenation and oxa replacement afforded two series of derivatives which were evaluated in vitro for inhibition of 3-hydroxy-3-methylglutaryl-coenzyme A reductase and acutely in vivo for oral effectiveness as inhibitors of cholesterogenesis in the rat. Of the compounds selected for further biological evaluation, the 6 beta-methyl-5-oxa 10 and 5 alpha-hydroxy 16 derivatives of 3,4,4a,5-tetrahydro 2a, as well as, the 6 beta-epimer 14 of 16 proved orally active as hypocholesterolemic agents in cholestyramine-primed dogs. Subsequent acute oral metabolism studies in dogs demonstrated that compounds 14 and 16 evoke lower peak plasma drug activity and area-under-the-curve values than does compound 10 and led to the selection of 14 and 16 for toxicological evaluation.&quot;
+## 
+## [[4]]
+## [1] NA
+## 
+## [[5]]
+## [1] &quot;The resistance of 6-[(R)-2-[3-(3,4-dihydroxybenzoyl)-3-(3-hydroxypropyl)-1-ureido]-2- phenylacetamido]penicillanic acid (1a) to metabolism by catechol-O-methyl-transferase (COMT) was increased by introduction of the chlorine atom into the catechol moiety. Penicillins (1b-1d) having one or two chlorine atoms at the positions adjacent to the hydroxyl group were found to have greater stability to COMT. This resulted in greater efficiency in vivo in experimental Pseudomonas aeruginosa and Escherichia coli infections. In vitro activities were essentially unchanged.&quot;
+## 
+## [[6]]
+## [1] &quot;Bacillus subtilis ferrochelatase is encoded by the hemH gene of the hemEHY gene cluster and catalyses the incorporation of Fe2+ into protoporphyrin IX. B. subtilis ferrochelatase produced in Escherichia coli was purified. It was found to be a monomeric, water-soluble enzyme of molecular mass 35 kDa which in addition to Fe2+ can incorporate Zn2+ and Cu2+ into protoporphyrin IX. Chemical modification experiments indicated that the single cysteine residue in the ferrochelatase is required for enzyme activity although it is not a conserved residue compared to other ferrochelatases. In growing B. subtilis, the ferrochelatase constitutes approximately 0.05% (by mass) of the total cell protein, which corresponds to some 600 ferrochelatase molecules/cell. The turnover number of isolated ferrochelatase, 18-29 min-1, was found to be consistent with the rate of haem synthesis in exponentially growing cells (0.2 mol haem formed/min/mol enzyme). It is concluded that the B. subtilis ferrochelatase has enzymic properties which are similar to those of other characterised ferrochelatases of known primary structure, i.e. ferrochelatases of the mitochondrial inner membrane of yeast and mammalian cells. However, in contrast to these enzymes the B. subtilis enzyme is a water-soluble protein and should be more amenable to structural analysis.&quot;</code></pre>
+<pre class="r"><code># Using str_to_lower() to convert all characters of strings to lower case. 
+abstract &lt;- str_to_lower(abstract)
+
+# Using str_detect() function to find how many articles contained the word &quot;in vitro&quot;.
+sum(str_detect(abstract, &quot;in vitro&quot;))</code></pre>
+<pre><code>## [1] 7</code></pre>
+<pre class="r"><code># Using str_detect() function to find how many articles contained the words &quot;drug resistance&quot; or &quot;drug-resistance&quot; or &quot;drug resistant&quot; or &quot;drug resistent&quot;.
+sum(str_detect(abstract, &quot;drug[ |-]resist[a|e]n[ce|t]&quot;))</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code># Using str_detect() function to find how many articles contained the word &quot;virus&quot;.
+sum(str_detect(abstract, &quot;virus&quot;))</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code># Using str_detect() function to find how many articles contained the word &quot;transmission&quot;.
+sum(str_detect(abstract, &quot;transmission&quot;))</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code># Using str_detect() function to find how many articles contained the word &quot;clinical study&quot;.
+sum(str_detect(abstract, &quot;clinical study&quot;))</code></pre>
+<pre><code>## [1] 0</code></pre>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

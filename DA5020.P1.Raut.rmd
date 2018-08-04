@@ -1,0 +1,257 @@
+---
+title: "DA5020 ~ Practicum 1 ~ Prasad Raut"
+output: html_document
+---
+
+# Task 1
+
+(0 pts) Download the PubMed excerpt data set (XML).  Load the XML file into a browser or text editing tool and inspect it. Explore the data set as you see fit and that allows you to get a sense of the data and get comfortable with it.
+
+```{r Task 1.a}
+# Installing the required packages using install.packages() function from the console and loading those packages into the R session using library() function.
+library(XML)
+library(RCurl)
+library(tidyverse)
+library(plyr)
+```
+
+```{r Task 1.b}
+# Using getURL() function to download the XML file from a URL.
+xData <- getURL("https://da5020.weebly.com/uploads/8/6/5/9/8659576/pubmedsample.jun18.xml")
+# Using xmlParse() function to extract data from an XML file and store it as an XML document named pubmed in R. Setting the root node for pubmed using xmlRoot() function.
+pubmed<- xmlRoot(xmlParse(xData), useInternalNodes = TRUE) 
+# Examining the first record from the pubmed XML document.
+pubmed[[1]]
+```
+
+
+# Task 2
+
+(30 pts) Load the data into R and create two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Only load the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Load this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Also, exclude any journals that do not have an ISSN as the primary key cannot be empty.
+
+```{r Task 2.a}
+# Using function() function to create the xmlToColumn() function which takes an argument named path containin the path of node in XML document. This function will be used to extract the data from the pubmed xml document into columns for creating tibbles.
+xmlToColumn <- function(path){
+  # Using xpathSApply() function to set the path to the nodes from pubmed XML document. 
+  xpathSApply(pubmed, "//PubmedArticle/MedlineCitation", function(x) {
+    # Using length() function with if statement to check if the path exists.
+    if(length(xpathSApply(x, path)) != 0) {
+      # Using xpathSApply() function to get the value from the XML node specified by the path.
+      xpathSApply(x, path, xmlValue)
+      } 
+    # Using else statement to put NA values if the node is missing.
+    else {
+        NA
+        }
+    })
+}
+
+# Creating the publication tibble:
+
+# Using xpathSApply() to get the PMID values from the nodes specified by the given path. Converting the PMID values to integer using as.integer() function.
+PMID <- as.integer(xpathSApply(pubmed, '//PubmedArticle/MedlineCitation/PMID', xmlValue, simplify = TRUE))
+
+# Creating the ISSN variable using xmlToColumn() function.
+ISSN <- xmlToColumn("./Article/Journal/ISSN")
+# Creating the Publication_year variable using xmlToColum() function.
+Publication_year <- xmlToColumn("./Article/Journal/JournalIssue/PubDate/Year")
+# Combining the ISSN and the Publication_year to form a foreign key for publication tibble and a primary key for journal tibble using paste() function.
+ISSN <- paste(ISSN, Publication_year, sep = ".") 
+
+# Creating the Date_completed variable using xmlToColumn() function. 
+Date_completed <- xmlToColumn("./DateCompleted")
+# Using str_replace() function to add "-" between year, month, and day of DateComplete values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateComplete.
+Date_completed <- as.Date(str_replace(Date_completed,"(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3"))
+
+# Creating the Date_revised variable using xmlToColumn() function.
+Date_revised <- xmlToColumn("./DateRevised")
+# Using str_replace() function to add "-" between year, month, and day of DateRevised values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateRevised.
+Date_revised <- as.Date(str_replace(Date_revised,"(\\d{4})(\\d{2})(\\d{2})$","\\1-\\2-\\3"))
+
+# Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the number of authors.
+Number_of_authors <- xpathSApply(pubmed, "//PubmedArticle/MedlineCitation", function(x) {
+  # Using length() function with if statement to check if the path exists for getting the authors.
+  if(length(xpathSApply(x, "./Article/AuthorList")) != 0) {
+    # Using xpathSApply() function to get the authors from the Author XML node specified by the path. Using the count() from plyr package and nrow() functions to count the number of authors in each node.
+    nrow(plyr::count(xpathSApply(x, "./Article/AuthorList/Author",xmlValue)))
+  }
+  # Using else statement to put NA values if the Authors are missing.
+  else {
+    NA
+  }
+})
+
+# Creating the Publication_type variable using xmlToColumn() function.
+Publication_type <- xmlToColumn("./Article/PublicationTypeList/PublicationType")
+# Using sapply() function to extract only the first element of all elements in the list Publication_type and storing it back as a vector.
+Publication_type <- sapply(1:length(Publication_type), function(x) Publication_type[[x]][1])
+
+# Creating the Article_title variable using xmlToColumn() function.
+Article_title <- xmlToColumn("./Article/ArticleTitle")
+# Using data_frame() function to add the specified variables as columns to the publication tibble.
+(publication <- data_frame(PMID, ISSN, Date_completed, Date_revised, Number_of_authors, Publication_type, Article_title))
+# Using View() function to display the created publication tibble in the R Data Viewer.
+View(publication)
+```
+
+```{r Task 2.b}
+# Creating the Journal tibble:
+
+# Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the Medium of the journals.
+Medium <- xpathSApply(pubmed, "//PubmedArticle/MedlineCitation", function(x) {
+  # Using length() function with if statement to check if the path exists for getting the Medium from the Journal Issue nodes.
+  if(length(xpathSApply(x, "./Article/Journal/JournalIssue")) != 0) {
+    # Using xpathSApply() function to get the attribute CitedMedium from the JournalIssue XML node specified by the given path.
+    xpathSApply(x, "./Article/Journal/JournalIssue", xmlGetAttr, "CitedMedium")
+  } 
+  # Using else statement to put NA values if the Authors are missing.
+  else {
+    NA
+  }
+})
+
+# Creating the Publication_season variable using xmlToColumn() function.
+Publication_season <- xmlToColumn("./Article/Journal/JournalIssue/PubDate/Season")
+
+# Creating the Language variable using xmlToColumn() function.
+Language <- xmlToColumn("./Article/Language")
+# Using sapply() function to extract only the first element of all elements in the variable Language and storing it back as a vector.
+Language <- sapply(1:length(Language), function(x) Language[[x]][1])
+
+# Creating the Journal_title variable using xmlToColumn() function.
+Journal_title <- xmlToColumn("./Article/Journal/Title")
+
+# Using data_frame() function to add the specified variables as columns to the journal tibble.  
+journal <- data_frame(ISSN, Medium, Publication_year, Publication_season, Language, Journal_title)
+# Removing all the ISSN values which are NA using filter() with substring() function and eliminating the duplicate rows from the journal tibble using the unique() function.
+(journal <- base::unique(filter(journal, substring(ISSN, 1, 2) != "NA")))
+# Using View() function to display the created journal tibble in the R Data Viewer.
+View(journal)
+```
+
+
+# Task 3
+
+(10 pts) Create a line graph of the number of publications per year.
+
+```{r Task 3}
+# Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publication years with their respective Publications.
+lg <- inner_join(publication, journal, by = "ISSN") 
+# Using table() function to get the frequency of publications each year. Converting the table to data frame named linegraph using as.data.frame() function.
+linegraph <- as.data.frame(table(lg$Publication_year))
+
+# Using ggplot() function to create a line graph of number of publications per year for the linegraph data frame.
+ggplot(data = linegraph, aes(x = Var1, y = Freq, group = 1)) +
+  geom_line(color = "red") + geom_point() + 
+  ggtitle("Number of Publications per Year") + xlab("Years") + ylab("Publications") + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+
+# Task 4
+
+(10 pts) Create a histogram of the number of publication per journal.
+
+```{r Task 4}
+# Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publications with their respective journal titles.  
+hist<- inner_join(publication, journal, by = "ISSN") 
+
+# Using ggplot() and geom_bar() functions to create a histogram of the number of publication per journal.
+ggplot(hist, aes(x = Journal_title, color = Journal_title)) + geom_bar() + ggtitle("Number of Publications per Journal") +  xlab("Journals")  + ylab("Publications") + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = "none")
+```
+
+
+# Task 5
+
+(10 pts) Find the article that had the most number of authors and list the article, journal, and number of authors.
+
+```{r Task 5}
+# Using filter() function to get the article having the most number of authors.
+filter(publication, Number_of_authors == max(Number_of_authors, na.rm = T)) %>%
+  # Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate article titles with their respective journal titles.
+  inner_join(journal, by = "ISSN") %>%
+  # Using select() function to list the columns containing article, journal, and number of authors.
+  select("Article" = Article_title, "Journal" = Journal_title, "Number of Authors" = Number_of_authors)
+```
+
+
+# Task 6
+
+(10 pts) Find the average number of authors for articles. Display a single number.
+
+```{r Task 6}
+# Using summarize() with mean() function to get the average number of authors for articles. Using round() function to display a single number.
+summarize(publication, "Average Number of Authors" = round(mean(Number_of_authors, na.rm = T), digits = 0))
+```
+
+
+# Task 7
+
+(10 pts) What is the shortest and the longest time periods between date completed and date revised. Display the time elapsed in days. Only consider cases where the difference is a positive number.
+
+```{r Task 7.a}
+# Calculating the time difference in days between the date revised and date completed.
+timediff <- (publication$Date_revised - publication$Date_completed)
+# Using which() function to remove the time difference which is a negative number. 
+timediff <- timediff[timediff > 0]
+# Using min() function to get the shortest time periods between date completed and date revised. 
+min(timediff, na.rm = T)
+```
+
+```{r Task 7.b}
+# Using max() function to get the longest time periods between date completed and date revised.
+max(timediff, na.rm = T)
+```
+
+
+# Task 8
+
+(10 pts) In how many different languages are the articles published in PubMed? Note that this will actually give an incorrect answer because the tibble only contains the first language of publication.
+
+```{r Task 8}
+# Using unique() function to get different languages of articles published in PubMed.
+(lang <- unique(journal$Language))
+# Using length() function to count the different languages of articles published in PubMed.
+length(lang)
+```
+
+
+# Task 9
+
+(20 pts) Using the XML data (not the tibbles created above), inspect the abstract text fields and find how many articles contained the words "in vitro", "drug resistance", "virus", "transmission", "clinical study" in any capitalization in any abstract section. Note that drug resistance could be spelled as "drug resistance" or "drug-resistance" or "drug resistant" or "drug resistent" -- use regular expressions to deal with the variation.
+
+```{r Task 9.a}
+# Creating the abstract list containing the abstracts for all publications using the xmlToColumn() function. 
+abstract <- xmlToColumn("./Article/Abstract/AbstractText")
+# Using head() function to examine the first few elements of the list abstract.
+head(abstract)
+```
+
+
+```{r Task 9.b}
+# Using str_to_lower() to convert all characters of strings to lower case. 
+abstract <- str_to_lower(abstract)
+
+# Using str_detect() function to find how many articles contained the word "in vitro".
+sum(str_detect(abstract, "in vitro"))
+```
+
+```{r Task 9.c}
+# Using str_detect() function to find how many articles contained the words "drug resistance" or "drug-resistance" or "drug resistant" or "drug resistent".
+sum(str_detect(abstract, "drug[ |-]resist[a|e]n[ce|t]"))
+```
+
+```{r Task 9.d}
+# Using str_detect() function to find how many articles contained the word "virus".
+sum(str_detect(abstract, "virus"))
+```
+
+```{r Task 9.e}
+# Using str_detect() function to find how many articles contained the word "transmission".
+sum(str_detect(abstract, "transmission"))
+```
+
+```{r Task 9.f}
+# Using str_detect() function to find how many articles contained the word "clinical study".
+sum(str_detect(abstract, "clinical study"))
+```
