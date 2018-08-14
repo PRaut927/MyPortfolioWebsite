@@ -177,12 +177,15 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Prasad's Website</a>
+      <a class="navbar-brand" href="index.html">Prasad's Blog</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Assignment_6_SQL.html##### stuff">SQL Using R</a>
 </li>
 <li>
   <a href="DA5020.P1.Raut.html">XML Data Extraction</a>
@@ -210,13 +213,14 @@ $(document).ready(function () {
 </div>
 
 
-<div id="download-the-pubmed-excerpt-data-set-xml.-load-the-xml-file-into-a-browser-or-text-editing-tool-and-inspect-it.-explore-the-data-set-as-you-see-fit-and-that-allows-you-to-get-a-sense-of-the-data-and-get-comfortable-with-it." class="section level2">
-<h2>Download the PubMed excerpt data set (XML). Load the XML file into a browser or text editing tool and inspect it. Explore the data set as you see fit and that allows you to get a sense of the data and get comfortable with it.</h2>
-<pre class="r"><code># Installing the required packages using install.packages() function from the console and loading those packages into the R session using library() function.
+<pre class="r"><code># Install the required packages &quot;XML&quot;, &quot;RCurl&quot;, &quot;tidyverse&quot;, and &quot;plyr&quot; using the install.packages() function.
+# Use the library() function to load these packages into the R session.
 library(XML)
 library(RCurl)
 library(tidyverse)
 library(plyr)</code></pre>
+<div id="download-the-pubmed-excerpt-data-set-xml.-load-the-xml-file-into-a-browser-or-text-editing-tool-and-inspect-it.-explore-the-data-set-as-you-see-fit-and-that-allows-you-to-get-a-sense-of-the-data-and-get-comfortable-with-it." class="section level3">
+<h3>Download the PubMed excerpt data set (XML). Load the XML file into a browser or text editing tool and inspect it. Explore the data set as you see fit and that allows you to get a sense of the data and get comfortable with it.</h3>
 <pre class="r"><code># Using getURL() function to download the XML file from a URL.
 xData &lt;- getURL(&quot;https://da5020.weebly.com/uploads/8/6/5/9/8659576/pubmedsample.jun18.xml&quot;)
 
@@ -319,20 +323,18 @@ pubmed[[1]]</code></pre>
 ##   &lt;/PubmedData&gt;
 ## &lt;/PubmedArticle&gt;</code></pre>
 </div>
-<div id="load-the-data-into-r-and-create-two-linked-tibbles-one-for-publication-and-one-for-journal.-use-issn-as-the-key-to-link-them.-only-load-the-following-information-into-the-publication-tibble-pmid-primary-key-for-publication-issn-and-publication-year-foreign-key-for-journal-date-completed-as-one-date-field-date-revised-as-one-date-field-number-of-authors-derivedcalculated-field-from-the-authors-publication-type-title-of-article.-load-this-information-into-the-journal-tibble-issn-primary-key-medium-from-citedmedium-attribute-publication-year-primary-key-publication-season-language-and-journal-title.-in-cases-where-there-are-multiple-languages-for-a-publication-pick-the-first-language.-same-for-publication-type-pick-the-first-one.-the-primary-key-for-journal-is-issn-publication-year.-also-exclude-any-journals-that-do-not-have-an-issn-as-the-primary-key-cannot-be-empty." class="section level2">
-<h2>Load the data into R and create two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Only load the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Load this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Also, exclude any journals that do not have an ISSN as the primary key cannot be empty.</h2>
-<pre class="r"><code># Using function() function to create the xmlToColumn() function which takes an argument named path containin the path of node in XML document. This function will be used to extract the data from the pubmed xml document into columns for creating tibbles.
+<div id="creating-two-linked-tibbles-one-for-publication-and-one-for-journal.-use-issn-as-the-key-to-link-them.-loading-the-following-information-into-the-publication-tibble-pmid-primary-key-for-publication-issn-and-publication-year-foreign-key-for-journal-date-completed-as-one-date-field-date-revised-as-one-date-field-number-of-authors-derivedcalculated-field-from-the-authors-publication-type-title-of-article.-loading-this-information-into-the-journal-tibble-issn-primary-key-medium-from-citedmedium-attribute-publication-year-primary-key-publication-season-language-and-journal-title.-in-cases-where-there-are-multiple-languages-for-a-publication-well-pick-the-first-language.-same-for-publication-type-pick-the-first-one.-the-primary-key-for-journal-is-issn-publication-year.-excluding-any-journals-that-do-not-have-an-issn-as-the-primary-key-cannot-be-empty." class="section level3">
+<h3>Creating two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Loading the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Loading this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, we’ll pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Excluding any journals that do not have an ISSN as the primary key cannot be empty.</h3>
+<pre class="r"><code># Creating a fuction called xmlToColumn() which takes an argument named path containing the path of node in XML document. This function will be used to extract the data from the pubmed XML document into columns for creating tibbles.
 xmlToColumn &lt;- function(path){
-  # Using xpathSApply() function to set the path to the nodes from pubmed XML document. 
-  xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) {
-    # Using length() function with if statement to check if the path exists.
-    if(length(xpathSApply(x, path)) != 0) {
-      # Using xpathSApply() function to get the value from the XML node specified by the path.
-      xpathSApply(x, path, xmlValue)
+  xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) # Using xpathSApply() function to set the path to the nodes from pubmed XML document.
+    {
+    if(length(xpathSApply(x, path)) != 0) # Checking if the path exists.
+      {
+      xpathSApply(x, path, xmlValue) # Using xpathSApply() function to get the value from the XML node specified by the path.
       } 
-    # Using else statement to put NA values if the node is missing.
     else {
-        NA
+        NA # If the node is missing.
         }
     })
 }
@@ -405,9 +407,8 @@ Medium &lt;- xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, fu
     # Using xpathSApply() function to get the attribute CitedMedium from the JournalIssue XML node specified by the given path.
     xpathSApply(x, &quot;./Article/Journal/JournalIssue&quot;, xmlGetAttr, &quot;CitedMedium&quot;)
   } 
-  # Using else statement to put NA values if the Authors are missing.
   else {
-    NA
+    NA # If the Authors are missing.
   }
 })
 
@@ -441,8 +442,8 @@ journal &lt;- data_frame(ISSN, Medium, Publication_year, Publication_season, Lan
 ## 10 0009-~ Print  1996             &lt;NA&gt;             eng      Circulation   
 ## # ... with 140 more rows</code></pre>
 </div>
-<div id="create-a-line-graph-of-the-number-of-publications-per-year." class="section level2">
-<h2>Create a line graph of the number of publications per year.</h2>
+<div id="creating-a-line-graph-of-the-number-of-publications-per-year." class="section level3">
+<h3>Creating a line graph of the number of publications per year.</h3>
 <pre class="r"><code># Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publication years with their respective Publications.
 lg &lt;- inner_join(publication, journal, by = &quot;ISSN&quot;) 
 # Using table() function to get the frequency of publications each year. Converting the table to data frame named linegraph using as.data.frame() function.
@@ -455,8 +456,8 @@ ggplot(data = linegraph, aes(x = Var1, y = Freq, group = 1)) +
   theme(axis.text.x = element_text(angle = 90, hjust = 1))</code></pre>
 <p><img src="DA5020.P1.Raut_files/figure-html/Task%203-1.png" width="672" /></p>
 </div>
-<div id="create-a-histogram-of-the-number-of-publication-per-journal." class="section level2">
-<h2>Create a histogram of the number of publication per journal.</h2>
+<div id="creating-a-histogram-of-the-number-of-publication-per-journal." class="section level3">
+<h3>Creating a histogram of the number of publication per journal.</h3>
 <pre class="r"><code># Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publications with their respective journal titles.  
 hist&lt;- inner_join(publication, journal, by = &quot;ISSN&quot;) 
 
@@ -464,8 +465,8 @@ hist&lt;- inner_join(publication, journal, by = &quot;ISSN&quot;)
 ggplot(hist, aes(x = Journal_title, color = Journal_title)) + geom_bar() + ggtitle(&quot;Number of Publications per Journal&quot;) +  xlab(&quot;Journals&quot;)  + ylab(&quot;Publications&quot;) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank(), legend.position = &quot;none&quot;)</code></pre>
 <p><img src="DA5020.P1.Raut_files/figure-html/Task%204-1.png" width="672" /></p>
 </div>
-<div id="find-the-article-that-had-the-most-number-of-authors-and-list-the-article-journal-and-number-of-authors." class="section level2">
-<h2>Find the article that had the most number of authors and list the article, journal, and number of authors.</h2>
+<div id="which-article-had-the-most-number-of-authors-displaying-the-article-journal-and-number-of-authors." class="section level3">
+<h3>Which article had the most number of authors? Displaying the article, journal, and number of authors.</h3>
 <pre class="r"><code># Using filter() function to get the article having the most number of authors.
 filter(publication, Number_of_authors == max(Number_of_authors, na.rm = T)) %&gt;%
   # Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate article titles with their respective journal titles.
@@ -477,15 +478,15 @@ filter(publication, Number_of_authors == max(Number_of_authors, na.rm = T)) %&gt
 ##   &lt;chr&gt;                                  &lt;chr&gt;                       &lt;int&gt;
 ## 1 Measurement of B --&gt; K*gamma branchin~ Physical revie~               621</code></pre>
 </div>
-<div id="find-the-average-number-of-authors-for-articles.-display-a-single-number." class="section level2">
-<h2>Find the average number of authors for articles. Display a single number.</h2>
+<div id="finding-the-average-number-of-authors-for-articles." class="section level3">
+<h3>Finding the average number of authors for articles.</h3>
 <pre class="r"><code># Using summarize() with mean() function to get the average number of authors for articles. Using round() function to display a single number.
 summarize(publication, &quot;Average Number of Authors&quot; = round(mean(Number_of_authors, na.rm = T), digits = 0))</code></pre>
 <pre><code>##   Average Number of Authors
 ## 1                        10</code></pre>
 </div>
-<div id="what-is-the-shortest-and-the-longest-time-periods-between-date-completed-and-date-revised-display-the-time-elapsed-in-days.-only-consider-cases-where-the-difference-is-a-positive-number." class="section level2">
-<h2>What is the shortest and the longest time periods between date completed and date revised? Display the time elapsed in days. Only consider cases where the difference is a positive number.</h2>
+<div id="what-is-the-shortest-and-the-longest-time-periods-between-date-completed-and-date-revised-displaying-the-time-elapsed-in-days.-only-considering-the-cases-where-the-difference-is-a-positive-number." class="section level3">
+<h3>What is the shortest and the longest time periods between date completed and date revised? Displaying the time elapsed in days. Only considering the cases where the difference is a positive number.</h3>
 <pre class="r"><code># Calculating the time difference in days between the date revised and date completed.
 timediff &lt;- (publication$Date_revised - publication$Date_completed)
 # Using which() function to remove the time difference which is a negative number. 
@@ -497,8 +498,8 @@ min(timediff, na.rm = T)</code></pre>
 max(timediff, na.rm = T)</code></pre>
 <pre><code>## Time difference of 14755 days</code></pre>
 </div>
-<div id="in-how-many-different-languages-are-the-articles-published-in-pubmed-note-that-this-will-actually-give-an-incorrect-answer-because-the-tibble-only-contains-the-first-language-of-publication." class="section level2">
-<h2>In how many different languages are the articles published in PubMed? Note that this will actually give an incorrect answer because the tibble only contains the first language of publication.</h2>
+<div id="in-how-many-different-languages-are-the-articles-published-in-pubmed-notethis-will-actually-give-an-incorrect-answer-because-the-tibble-only-contains-the-first-language-of-publication." class="section level3">
+<h3>In how many different languages are the articles published in PubMed? Note:This will actually give an incorrect answer because the tibble only contains the first language of publication.</h3>
 <pre class="r"><code># Using unique() function to get different languages of articles published in PubMed.
 (lang &lt;- unique(journal$Language))</code></pre>
 <pre><code>##  [1] &quot;eng&quot; &quot;fre&quot; &quot;pol&quot; &quot;spa&quot; &quot;rus&quot; &quot;swe&quot; &quot;dut&quot; &quot;chi&quot; &quot;ita&quot; &quot;kor&quot;</code></pre>
@@ -506,8 +507,8 @@ max(timediff, na.rm = T)</code></pre>
 length(lang)</code></pre>
 <pre><code>## [1] 10</code></pre>
 </div>
-<div id="using-the-xml-data-not-the-tibbles-created-above-inspect-the-abstract-text-fields-and-find-how-many-articles-contained-the-words-in-vitro-drug-resistance-virus-transmission-clinical-study-in-any-capitalization-in-any-abstract-section.-note-that-drug-resistance-could-be-spelled-as-drug-resistance-or-drug-resistance-or-drug-resistant-or-drug-resistent-use-regular-expressions-to-deal-with-the-variation." class="section level2">
-<h2>Using the XML data (not the tibbles created above), inspect the abstract text fields and find how many articles contained the words “in vitro”, “drug resistance”, “virus”, “transmission”, “clinical study” in any capitalization in any abstract section. Note that drug resistance could be spelled as “drug resistance” or “drug-resistance” or “drug resistant” or “drug resistent” – use regular expressions to deal with the variation.</h2>
+<div id="lets-inspect-the-abstract-text-fields-from-the-xml-datanot-the-tibbles-created-above-and-find-how-many-articles-contained-the-words-in-vitro-drug-resistance-virus-transmission-clinical-study-in-any-capitalization-in-any-abstract-section.-notedrug-resistance-could-be-spelled-as-drug-resistance-or-drug-resistance-or-drug-resistant-or-drug-resistent.-well-use-regular-expressions-to-deal-with-this-variation." class="section level3">
+<h3>Let’s inspect the abstract text fields from the XML data(not the tibbles created above) and find how many articles contained the words “in vitro”, “drug resistance”, “virus”, “transmission”, “clinical study” in any capitalization in any abstract section. Note:“drug resistance” could be spelled as “drug resistance” or “drug-resistance” or “drug resistant” or “drug resistent”. We’ll use regular expressions to deal with this variation.</h3>
 <pre class="r"><code># Creating the abstract list containing the abstracts for all publications using the xmlToColumn() function. 
 abstract &lt;- xmlToColumn(&quot;./Article/Abstract/AbstractText&quot;)
 # Using head() function to examine the first few elements of the list abstract.

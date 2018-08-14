@@ -1,0 +1,56 @@
+---
+title: "SQL using R"
+output:
+  html_document:
+    theme: flatly
+    css: style.css
+---
+
+```{r, message = F, warning = F}
+# Install the required packages "sqldf" using the install.packages() function.
+# Use the library() function to load these packages into the R session.
+library(sqldf)
+```
+
+```{r}
+customer <- read.csv("customertxndatahead.csv", stringsAsFactors = F)
+head(customer)
+```
+
+
+### Creating a table named transactions in that matches the CSV (column name and order must match).
+
+```{r}
+sqldf("SELECT * FROM customer 
+LIMIT 10;")
+```
+
+
+### Creating a SQL query that finds the total revenue by OS.
+
+```{r}
+sqldf("SELECT OS, ROUND(SUM(Revenue), 2) AS 'Total Revenue' 
+      FROM customer 
+      GROUP BY OS")  
+```
+
+
+### Creating a SQL query that finds the largest revenue and for which OS and gender it occurred.
+
+```{r}
+sqldf("SELECT OS, Gender, MAX(Revenue) AS 'Largest Revenue' 
+FROM customer
+GROUP BY OS;")
+```
+
+
+### Creating a SQL query that finds the average number of visits by gender, excluding NA cases.
+
+```{r}
+sqldf("SELECT Gender, ROUND(AVG(Visits), 2) AS 'Average Visits' 
+FROM customer
+WHERE Gender NOT LIKE 'NA' 
+GROUP BY Gender;")
+```
+
+

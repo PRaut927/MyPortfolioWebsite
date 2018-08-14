@@ -11,7 +11,7 @@
 
 
 
-<title>Web Scraping using Rvest</title>
+<title>Web-Scraping using Rvest</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -177,12 +177,15 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Prasad's Website</a>
+      <a class="navbar-brand" href="index.html">Prasad's Blog</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
   <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="Assignment_6_SQL.html##### stuff">SQL Using R</a>
 </li>
 <li>
   <a href="DA5020.P1.Raut.html">XML Data Extraction</a>
@@ -205,73 +208,91 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">Web Scraping using Rvest</h1>
+<h1 class="title toc-ignore">Web-Scraping using Rvest</h1>
 
 </div>
 
 
-<div id="redo-problem-1-but-using-rvest-or-direct-parsing-of-the-the-html-in-r-rather-than-an-external-toolkit.-as-in-the-problem-save-your-result-as-a-csv.-make-sure-it-matches-the-csv-from-problem-1.-you-may-use-any-parsing-method-in-r-to-solve-this-problem-and-scrape-the-data." class="section level1">
-<h1>Redo problem 1 but using rvest or direct parsing of the the HTML in R rather than an external toolkit. As in the problem, save your result as a CSV. Make sure it matches the CSV from problem 1. You may use any parsing method in R to solve this problem and scrape the data.</h1>
-<pre class="r"><code># Installing the &quot;rvest&quot; package from the R console. Using the library() function to load the rvest package into the R session. 
-library(tidyverse)
-library(rvest)</code></pre>
-<pre class="r"><code># Using map_df() function to parse and scrape data from the first three pages(indicated by 0, 30, and 60) of search results for burgers on Yelp website. The search filter is limited to Boston neighborhoods of Allston, Brighton, Back Bay, Beacon Hill, Downtown Area, Fenway, South End, and West End. 
-yelpburgers &lt;- map_df(c(0, 30, 60), function(i) {
-  # Using cat() function to print &quot;:)&quot; as a progress indicator indicating success in parsing each page URL when scraping the data from Yelp website.
-  cat(&quot;:)&quot;)
-  #  Using read_html() with paste0() function to read the data to be scraped from the URLs of first three pages of the search result. 
+<div id="using-rvest-package-for-direct-parsing-of-the-the-html-web-pages-in-r-rather-than-an-external-toolkit." class="section level3">
+<h3>Using “rvest” package for direct parsing of the the HTML web pages in R rather than an external toolkit.</h3>
+<pre class="r"><code># Install the required packages &quot;rvest&quot; and &quot;tidyverse&quot; using the install.packages() function in R.
+# Use the library() function to load these packages into the R session. 
+library(rvest)
+library(tidyverse)</code></pre>
+<pre class="r"><code># Let&#39;s use the map_df() function to parse and scrape data from the first three web pages (indicated by 0, 30, and 60) of search results for burgers on Yelp website. The search filter is limited to Boston neighborhoods of Allston, Brighton, Back Bay, Beacon Hill, Downtown Area, Fenway, South End, and West End. 
+bostonburgers &lt;- map_df(c(0, 30, 60), function(i) {
+  cat(&quot;:)&quot;) # Progress Indicator.
+  # Using read_html() with paste0() function to read the data to be scraped from the URLs of first three pages of the search result. 
   pg &lt;- read_html(paste0(&quot;https://www.yelp.com/search?find_desc=Burgers&amp;start=&quot;,i,&quot;&amp;l=p:MA:Boston::%5BAllston/Brighton,Back_Bay,Beacon_Hill,Downtown,Fenway,South_End,West_End%5D&quot;))
   # Using the data.frame() function to create a data frame of the data scraped from the Yelp website. Using html_text() with html_nodes() function to get names of restaurant from an HTML node using a CSS selector.
   data.frame(RestaurantName = html_text(html_nodes(pg, css = &quot;.indexed-biz-name .js-analytics-click&quot;)),
              # Using html_text() with html_nodes() function to get the review counts, service categories, and addresses of restaurants from an HTML node using a CSS selector. Using gsub() function to remove additional white spaces in the resulting text data. The additional White spaces are detected by using the regular expression &quot;\\s+&quot; and are replaced by a single space &quot; &quot;.
              ReviewCount = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .rating-qualifier&quot;))),
              ServiceCategories = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .category-str-list&quot;))),
-             Address = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.natural-search-result .secondary-attributes :nth-child(2)&quot;))),
+             Address = gsub(&quot;\\s+&quot;, &quot; &quot;, html_text(html_nodes(pg, css = &quot;.biz-parent-container a , .scrollable-photos-search-result address&quot;))),
              # Using html_attr() with html_nodes() function to get the &quot;title&quot; attribute of the HTML node using CSS selector for average review stars.
              AverageReviewStars = html_attr(html_nodes(pg, css = &quot;.natural-search-result .rating-large&quot;), &quot;title&quot;),
              # Setting the argument stringsAsFactors as False to avoid coverting string values to factor.
              stringsAsFactors = F) 
 }) %&gt;%
-  # Using rowid_to_column() function to assign a unique ID for each row in yelpburgers data frame. Using a pipe operator(%&gt;%) to chain it to map_df() function.
-  rowid_to_column(&quot;RowID&quot;) </code></pre>
+  rowid_to_column(&quot;Row_id&quot;) # Assigning a row ID as a unique identifier.</code></pre>
 <pre><code>## :):):)</code></pre>
 <pre class="r"><code># Using head() function to display the first 10 rows of the yelpburgers data frame.
-head(yelpburgers, n = 10)</code></pre>
-<pre><code>##    RowID                 RestaurantName   ReviewCount
-## 1      1                   Tasty Burger  993 reviews 
-## 2      2                    Wahlburgers  537 reviews 
+head(bostonburgers)</code></pre>
+<pre><code>##   Row_id                 RestaurantName   ReviewCount
+## 1      1                   Tasty Burger  997 reviews 
+## 2      2                    Wahlburgers  546 reviews 
 ## 3      3                    Shake Shack  314 reviews 
 ## 4      4                        UBurger  154 reviews 
-## 5      5                    The Gallows  788 reviews 
-## 6      6 MOOYAH Burgers, Fries &amp; Shakes   35 reviews 
-## 7      7                           Coda  555 reviews 
-## 8      8                5 Napkin Burger  646 reviews 
-## 9      9                      Jm Curley  724 reviews 
-## 10    10                     The Avenue  331 reviews 
-##                                               ServiceCategories
-## 1                                 Burgers, Hot Dogs, Fast Food 
-## 2                              American (Traditional), Burgers 
-## 3                                 Burgers, Fast Food, Hot Dogs 
-## 4                                                      Burgers 
-## 5                        Burgers, Bars, American (Traditional) 
-## 6   Burgers, American (Traditional), Ice Cream &amp; Frozen Yogurt 
-## 7                       American (New), Burgers, Cocktail Bars 
-## 8                                                      Burgers 
-## 9                                      American (New), Lounges 
-## 10        American (Traditional), Beer Bar, Tapas/Small Plates 
-##             Address AverageReviewStars
-## 1   (617) 425-4444     4.0 star rating
-## 2   (617) 927-6810     3.5 star rating
-## 3   (617) 933-5050     3.5 star rating
-## 4   (617) 487-4855     4.0 star rating
-## 5   (617) 425-0200     4.0 star rating
-## 6   (857) 277-0176     4.0 star rating
-## 7   (617) 536-2632     4.0 star rating
-## 8   (617) 375-2277     3.0 star rating
-## 9   (617) 338-5333     4.0 star rating
-## 10  (617) 903-3110     4.0 star rating</code></pre>
+## 5      5                    The Gallows  789 reviews 
+## 6      6 MOOYAH Burgers, Fries &amp; Shakes   36 reviews 
+##                                              ServiceCategories
+## 1                                Burgers, Hot Dogs, Fast Food 
+## 2                             American (Traditional), Burgers 
+## 3                                Burgers, Fast Food, Hot Dogs 
+## 4                                                     Burgers 
+## 5                       Burgers, Bars, American (Traditional) 
+## 6  Burgers, American (Traditional), Ice Cream &amp; Frozen Yogurt 
+##                   Address AverageReviewStars
+## 1       1301 Boylston St     4.0 star rating
+## 2      132 Brookline Ave     3.5 star rating
+## 3         234 Newbury St     3.5 star rating
+## 4  1022 Commonwealth Ave     4.0 star rating
+## 5     1395 Washington St     4.0 star rating
+## 6         140 Tremont St     4.0 star rating</code></pre>
 <pre class="r"><code># Using write.csv() function to export the scraped data to a csv file named &quot;rvest.csv&quot;. 
-write.csv(yelpburgers, file = &quot;rvest.csv&quot;, row.names = F)</code></pre>
+write.csv(bostonburgers, file = &quot;YelpBostonBurgers.csv&quot;, row.names = F)</code></pre>
+<p>What are the average reviews stars for all the restaurants?</p>
+<pre class="r"><code># Using gsub() function to remove the additional string &quot; star rating&quot; from the AverageReviewStars column. Converting the result to numeric using the as.numeric() function.
+bostonburgers$AverageReviewStars &lt;- as.numeric(gsub(&quot; star rating&quot;, &quot;&quot;, bostonburgers$AverageReviewStars))
+
+# Using mean() function to calculate the average review stars for all restaurants.
+mean(bostonburgers$AverageReviewStars)</code></pre>
+<pre><code>## [1] 3.694444</code></pre>
+<p>What are the top 5 restaurants serving good burgers in Boston?</p>
+<pre class="r"><code>arrange(bostonburgers, desc(AverageReviewStars)) %&gt;%
+  arrange(desc(ReviewCount)) %&gt;%
+  select(RestaurantName, Address, AverageReviewStars, ReviewCount) %&gt;%
+  head(n = 5)</code></pre>
+<pre><code>##          RestaurantName            Address AverageReviewStars
+## 1          Tasty Burger  1301 Boylston St                 4.0
+## 2         Fill-A-Buster    142 Bowdoin St                 4.0
+## 3             Five Guys      58 Summer St                 3.5
+## 4 Cheeky Monkey Brewing    3 Lansdowne St                 3.0
+## 5           The Bullpen  19-21 Yawkey Way                 4.0
+##     ReviewCount
+## 1  997 reviews 
+## 2   94 reviews 
+## 3   94 reviews 
+## 4   93 reviews 
+## 5    9 reviews</code></pre>
+<p>Which restaurant has the lowest ratings?</p>
+<pre class="r"><code># Using filter() function to determine the restaurant which has the lowest rating from the burgers data frame.
+filter(bostonburgers, AverageReviewStars == min(AverageReviewStars)) %&gt;%
+  # Using select() function to display the columns containing the restaurant name, review count, address and the lowest rating. 
+  select(RestaurantName, ReviewCount, Address, &quot;Lowest Rating&quot; = AverageReviewStars)</code></pre>
+<pre><code>##   RestaurantName  ReviewCount       Address Lowest Rating
+## 1   Tasty Burger  18 reviews   1 Nashua St              2</code></pre>
 </div>
 
 

@@ -1,45 +1,74 @@
 ---
-title: "Web Scraping using Rvest"
+title: "Web-Scraping using Rvest"
 output:
   html_document:
     theme: flatly
     css: style.css
 ---
 
-# Redo problem 1 but using rvest or direct parsing of the the HTML in R rather than an external toolkit. As in the problem, save your result as a CSV. Make sure it matches the CSV from problem 1. You may use any parsing method in R to solve this problem and scrape the data.
+### Using "rvest" package for direct parsing of the the HTML web pages in R rather than an external toolkit.
 
-```{r}
-# Installing the "rvest" package from the R console. Using the library() function to load the rvest package into the R session. 
-library(tidyverse)
+```{r, warning = F, message = F}
+# Install the required packages "rvest" and "tidyverse" using the install.packages() function in R.
+# Use the library() function to load these packages into the R session. 
 library(rvest)
+library(tidyverse)
 ```
 
 ```{r}
-# Using map_df() function to parse and scrape data from the first three pages(indicated by 0, 30, and 60) of search results for burgers on Yelp website. The search filter is limited to Boston neighborhoods of Allston, Brighton, Back Bay, Beacon Hill, Downtown Area, Fenway, South End, and West End. 
-yelpburgers <- map_df(c(0, 30, 60), function(i) {
-  # Using cat() function to print ":)" as a progress indicator indicating success in parsing each page URL when scraping the data from Yelp website.
-  cat(":)")
-  #  Using read_html() with paste0() function to read the data to be scraped from the URLs of first three pages of the search result. 
+# Let's use the map_df() function to parse and scrape data from the first three web pages (indicated by 0, 30, and 60) of search results for burgers on Yelp website. The search filter is limited to Boston neighborhoods of Allston, Brighton, Back Bay, Beacon Hill, Downtown Area, Fenway, South End, and West End. 
+bostonburgers <- map_df(c(0, 30, 60), function(i) {
+  cat(":)") # Progress Indicator.
+  # Using read_html() with paste0() function to read the data to be scraped from the URLs of first three pages of the search result. 
   pg <- read_html(paste0("https://www.yelp.com/search?find_desc=Burgers&start=",i,"&l=p:MA:Boston::%5BAllston/Brighton,Back_Bay,Beacon_Hill,Downtown,Fenway,South_End,West_End%5D"))
   # Using the data.frame() function to create a data frame of the data scraped from the Yelp website. Using html_text() with html_nodes() function to get names of restaurant from an HTML node using a CSS selector.
   data.frame(RestaurantName = html_text(html_nodes(pg, css = ".indexed-biz-name .js-analytics-click")),
              # Using html_text() with html_nodes() function to get the review counts, service categories, and addresses of restaurants from an HTML node using a CSS selector. Using gsub() function to remove additional white spaces in the resulting text data. The additional White spaces are detected by using the regular expression "\\s+" and are replaced by a single space " ".
              ReviewCount = gsub("\\s+", " ", html_text(html_nodes(pg, css = ".natural-search-result .rating-qualifier"))),
              ServiceCategories = gsub("\\s+", " ", html_text(html_nodes(pg, css = ".natural-search-result .category-str-list"))),
-             Address = gsub("\\s+", " ", html_text(html_nodes(pg, css = ".natural-search-result .secondary-attributes :nth-child(2)"))),
+             Address = gsub("\\s+", " ", html_text(html_nodes(pg, css = ".biz-parent-container a , .scrollable-photos-search-result address"))),
              # Using html_attr() with html_nodes() function to get the "title" attribute of the HTML node using CSS selector for average review stars.
              AverageReviewStars = html_attr(html_nodes(pg, css = ".natural-search-result .rating-large"), "title"),
              # Setting the argument stringsAsFactors as False to avoid coverting string values to factor.
              stringsAsFactors = F) 
 }) %>%
-  # Using rowid_to_column() function to assign a unique ID for each row in yelpburgers data frame. Using a pipe operator(%>%) to chain it to map_df() function.
-  rowid_to_column("RowID") 
+  rowid_to_column("Row_id") # Assigning a row ID as a unique identifier.
 ```
 
 ```{r}
 # Using head() function to display the first 10 rows of the yelpburgers data frame.
-head(yelpburgers, n = 10)
+head(bostonburgers)
+```
 
+```{r}
 # Using write.csv() function to export the scraped data to a csv file named "rvest.csv". 
-write.csv(yelpburgers, file = "rvest.csv", row.names = F)
+write.csv(bostonburgers, file = "YelpBostonBurgers.csv", row.names = F)
+```
+
+What are the average reviews stars for all the restaurants?
+
+```{r}
+# Using gsub() function to remove the additional string " star rating" from the AverageReviewStars column. Converting the result to numeric using the as.numeric() function.
+bostonburgers$AverageReviewStars <- as.numeric(gsub(" star rating", "", bostonburgers$AverageReviewStars))
+
+# Using mean() function to calculate the average review stars for all restaurants.
+mean(bostonburgers$AverageReviewStars)
+```
+
+What are the top 5 restaurants serving good burgers in Boston?
+
+```{r}
+arrange(bostonburgers, desc(AverageReviewStars)) %>%
+  arrange(desc(ReviewCount)) %>%
+  select(RestaurantName, Address, AverageReviewStars, ReviewCount) %>%
+  head(n = 5)
+```
+
+Which restaurant has the lowest ratings?
+
+```{r}
+# Using filter() function to determine the restaurant which has the lowest rating from the burgers data frame.
+filter(bostonburgers, AverageReviewStars == min(AverageReviewStars)) %>%
+  # Using select() function to display the columns containing the restaurant name, review count, address and the lowest rating. 
+  select(RestaurantName, ReviewCount, Address, "Lowest Rating" = AverageReviewStars)
 ```

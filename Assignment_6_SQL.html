@@ -11,7 +11,7 @@
 
 
 
-<title>About Me</title>
+<title>SQL using R</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -208,19 +208,66 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">About Me</h1>
+<h1 class="title toc-ignore">SQL using R</h1>
 
 </div>
 
 
-<ul>
-<li><strong>Name:</strong> Prasad Raut</li>
-<li><strong>Occupation:</strong> “Student” at Northeastern University.</li>
-<li><strong>Hobbies:</strong> Learning new stuff about Data Science.</li>
-</ul>
-<div class="figure">
-<img src="Me.jpg" />
-
+<pre class="r"><code># Install the required packages &quot;sqldf&quot; using the install.packages() function.
+# Use the library() function to load these packages into the R session.
+library(sqldf)</code></pre>
+<pre class="r"><code>customer &lt;- read.csv(&quot;customertxndatahead.csv&quot;, stringsAsFactors = F)
+head(customer)</code></pre>
+<pre><code>##   Visits Transactions      OS Gender   Revenue
+## 1      7            0 Android   Male    0.0000
+## 2     20            1     iOS   &lt;NA&gt;  576.8668
+## 3     22            1     iOS Female  850.0000
+## 4     24            2     iOS Female 1050.0000
+## 5      1            0 Android   Male    0.0000
+## 6     13            1 Android   Male  460.0000</code></pre>
+<div id="creating-a-table-named-transactions-in-that-matches-the-csv-column-name-and-order-must-match." class="section level3">
+<h3>Creating a table named transactions in that matches the CSV (column name and order must match).</h3>
+<pre class="r"><code>sqldf(&quot;SELECT * FROM customer 
+LIMIT 10;&quot;)</code></pre>
+<pre><code>##    Visits Transactions      OS Gender   Revenue
+## 1       7            0 Android   Male    0.0000
+## 2      20            1     iOS   &lt;NA&gt;  576.8668
+## 3      22            1     iOS Female  850.0000
+## 4      24            2     iOS Female 1050.0000
+## 5       1            0 Android   Male    0.0000
+## 6      13            1 Android   Male  460.0000
+## 7      23            2     iOS   Male 1850.0000
+## 8      14            1 Android   Male  480.0000
+## 9      11            1 Android   Male  110.0000
+## 10     24            2     iOS   Male 1950.0000</code></pre>
+</div>
+<div id="creating-a-sql-query-that-finds-the-total-revenue-by-os." class="section level3">
+<h3>Creating a SQL query that finds the total revenue by OS.</h3>
+<pre class="r"><code>sqldf(&quot;SELECT OS, ROUND(SUM(Revenue), 2) AS &#39;Total Revenue&#39; 
+      FROM customer 
+      GROUP BY OS&quot;)  </code></pre>
+<pre><code>##        OS Total Revenue
+## 1 Android       4099918
+## 2     iOS       6272605</code></pre>
+</div>
+<div id="creating-a-sql-query-that-finds-the-largest-revenue-and-for-which-os-and-gender-it-occurred." class="section level3">
+<h3>Creating a SQL query that finds the largest revenue and for which OS and gender it occurred.</h3>
+<pre class="r"><code>sqldf(&quot;SELECT OS, Gender, MAX(Revenue) AS &#39;Largest Revenue&#39; 
+FROM customer
+GROUP BY OS;&quot;)</code></pre>
+<pre><code>##        OS Gender Largest Revenue
+## 1 Android   Male            2000
+## 2     iOS   Male            2000</code></pre>
+</div>
+<div id="creating-a-sql-query-that-finds-the-average-number-of-visits-by-gender-excluding-na-cases." class="section level3">
+<h3>Creating a SQL query that finds the average number of visits by gender, excluding NA cases.</h3>
+<pre class="r"><code>sqldf(&quot;SELECT Gender, ROUND(AVG(Visits), 2) AS &#39;Average Visits&#39; 
+FROM customer
+WHERE Gender NOT LIKE &#39;NA&#39; 
+GROUP BY Gender;&quot;)</code></pre>
+<pre><code>##   Gender Average Visits
+## 1 Female          21.21
+## 2   Male          10.87</code></pre>
 </div>
 
 

@@ -1,13 +1,15 @@
-name: "Prasad's website"
+name: "Prasad's Website"
 output_dir: "."
 navbar:
-  title: "Prasad's Website"
+  title: "Prasad's Blog"
   left:
     - text: "Home"
       href: index.html
-    - text: "XML Data Extraction"     ##### the new
+    - text: "SQL Using R"        ##### the new
+      href: Assignment_6_SQL.html##### stuff
+    - text: "XML Data Extraction"##### the new
       href: DA5020.P1.Raut.html  ##### stuff
-    - text: "Web Scraping"     ##### the new
+    - text: "Web Scraping"       ##### the new
       href: DA5020.Raut.A7.html  ##### stuff
     - text: "About Me"
       href: about.html

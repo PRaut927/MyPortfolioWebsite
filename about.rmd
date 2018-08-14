@@ -3,7 +3,7 @@ title: "About Me"
 ---
 
 - __Name:__ Prasad Raut
-- __Ocupation:__ "Student"
-- __Hobbies:__ Learning about Data science. 
+- __Occupation:__ "Student" at Northeastern University.
+- __Hobbies:__ Learning new stuff about Data Science. 
  
 ![](Me.jpg)
