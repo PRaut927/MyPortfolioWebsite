@@ -13,12 +13,10 @@ library(sqldf)
 ```
 
 ```{r}
-customer <- read.csv("customertxndatahead.csv", stringsAsFactors = F)
-head(customer)
+customer <- read.csv("customertxndatahead.csv", stringsAsFactors = F) # Importing data from a CSV file into the dataframe named customer.
 ```
 
-
-### Creating a table named transactions in that matches the CSV (column name and order must match).
+### Using the SELECT statement from SQL to display the first few rows of the customer dataset.
 
 ```{r}
 sqldf("SELECT * FROM customer 

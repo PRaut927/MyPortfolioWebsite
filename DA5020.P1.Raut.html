@@ -213,19 +213,16 @@ $(document).ready(function () {
 </div>
 
 
-<pre class="r"><code># Install the required packages &quot;XML&quot;, &quot;RCurl&quot;, &quot;tidyverse&quot;, and &quot;plyr&quot; using the install.packages() function.
+<pre class="r"><code># Install the required packages &quot;XML&quot;, &quot;tidyverse&quot;, and &quot;plyr&quot; using the install.packages() function.
 # Use the library() function to load these packages into the R session.
 library(XML)
-library(RCurl)
 library(tidyverse)
 library(plyr)</code></pre>
-<div id="download-the-pubmed-excerpt-data-set-xml.-load-the-xml-file-into-a-browser-or-text-editing-tool-and-inspect-it.-explore-the-data-set-as-you-see-fit-and-that-allows-you-to-get-a-sense-of-the-data-and-get-comfortable-with-it." class="section level3">
-<h3>Download the PubMed excerpt data set (XML). Load the XML file into a browser or text editing tool and inspect it. Explore the data set as you see fit and that allows you to get a sense of the data and get comfortable with it.</h3>
-<pre class="r"><code># Using getURL() function to download the XML file from a URL.
-xData &lt;- getURL(&quot;https://da5020.weebly.com/uploads/8/6/5/9/8659576/pubmedsample.jun18.xml&quot;)
-
-# Using xmlParse() function to extract data from an XML file and store it as an XML document named pubmed in R. Setting the root node for pubmed using xmlRoot() function.
-pubmed&lt;- xmlRoot(xmlParse(xData), useInternalNodes = TRUE) 
+<p>We’ll be working with a sample of <a href="ftp://ftp.ncbi.nlm.nih.gov/pubmed/baseline-2018-sample/" target="_blank">MEDLINE/PubMed</a> publication data obtained from the National Institute of Health (NIH) <a href="https://www.nlm.nih.gov/databases/download/pubmed_medline.html">website</a>.</p>
+<div id="parsing-the-downloaded-xml-file.-explore-the-pubmed-data-by-examining-its-first-node" class="section level3">
+<h3>Parsing the downloaded XML file. Explore the pubmed data by examining it’s first node:</h3>
+<pre class="r"><code># Using xmlParse() function to extract data from an XML file and store it as an XML document named pubmed in R. Setting the root node for pubmed using xmlRoot() function.
+pubmed&lt;- xmlRoot(xmlParse(file = &quot;pubmedsample18n0001.xml&quot;), useInternalNodes = TRUE) 
 
 # Examining the first record from the pubmed XML document.
 pubmed[[1]]</code></pre>
@@ -322,9 +319,7 @@ pubmed[[1]]</code></pre>
 ##     &lt;/ArticleIdList&gt;
 ##   &lt;/PubmedData&gt;
 ## &lt;/PubmedArticle&gt;</code></pre>
-</div>
-<div id="creating-two-linked-tibbles-one-for-publication-and-one-for-journal.-use-issn-as-the-key-to-link-them.-loading-the-following-information-into-the-publication-tibble-pmid-primary-key-for-publication-issn-and-publication-year-foreign-key-for-journal-date-completed-as-one-date-field-date-revised-as-one-date-field-number-of-authors-derivedcalculated-field-from-the-authors-publication-type-title-of-article.-loading-this-information-into-the-journal-tibble-issn-primary-key-medium-from-citedmedium-attribute-publication-year-primary-key-publication-season-language-and-journal-title.-in-cases-where-there-are-multiple-languages-for-a-publication-well-pick-the-first-language.-same-for-publication-type-pick-the-first-one.-the-primary-key-for-journal-is-issn-publication-year.-excluding-any-journals-that-do-not-have-an-issn-as-the-primary-key-cannot-be-empty." class="section level3">
-<h3>Creating two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Loading the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Loading this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, we’ll pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Excluding any journals that do not have an ISSN as the primary key cannot be empty.</h3>
+<p>Creating two linked tibbles: one for publication and one for journal. Use ISSN as the key to link them. Loading the following information into the publication tibble: PMID (primary key for publication), ISSN and publication year (foreign key for journal), date completed (as one date field), date revised (as one date field), number of authors (derived/calculated field from the authors), publication type, title of article. Loading this information into the journal tibble: ISSN (primary key), medium (from CitedMedium attribute), publication year (primary key), publication season, language, and journal title. In cases where there are multiple languages for a publication, we’ll pick the first language. Same for publication type: pick the first one. The primary key for journal is (ISSN, publication year). Excluding any journals that do not have an ISSN as the primary key cannot be empty.</p>
 <pre class="r"><code># Creating a fuction called xmlToColumn() which takes an argument named path containing the path of node in XML document. This function will be used to extract the data from the pubmed XML document into columns for creating tibbles.
 xmlToColumn &lt;- function(path){
   xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) # Using xpathSApply() function to set the path to the nodes from pubmed XML document.
@@ -337,27 +332,31 @@ xmlToColumn &lt;- function(path){
         NA # If the node is missing.
         }
     })
-}
-
-# Creating the publication tibble:
-
-# Using xpathSApply() to get the PMID values from the nodes specified by the given path. Converting the PMID values to integer using as.integer() function.
+}</code></pre>
+</div>
+<div id="creating-the-publication-tibble" class="section level3">
+<h3>Creating the publication tibble:</h3>
+<pre class="r"><code># Using xpathSApply() to get the PMID values from the nodes specified by the given path. Converting the PMID values to integer using as.integer() function.
 PMID &lt;- as.integer(xpathSApply(pubmed, &#39;//PubmedArticle/MedlineCitation/PMID&#39;, xmlValue, simplify = TRUE))
 
 # Creating the ISSN variable using xmlToColumn() function.
 ISSN &lt;- xmlToColumn(&quot;./Article/Journal/ISSN&quot;)
+
 # Creating the Publication_year variable using xmlToColum() function.
 Publication_year &lt;- xmlToColumn(&quot;./Article/Journal/JournalIssue/PubDate/Year&quot;)
+
 # Combining the ISSN and the Publication_year to form a foreign key for publication tibble and a primary key for journal tibble using paste() function.
 ISSN &lt;- paste(ISSN, Publication_year, sep = &quot;.&quot;) 
 
 # Creating the Date_completed variable using xmlToColumn() function. 
 Date_completed &lt;- xmlToColumn(&quot;./DateCompleted&quot;)
+
 # Using str_replace() function to add &quot;-&quot; between year, month, and day of DateComplete values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateComplete.
 Date_completed &lt;- as.Date(str_replace(Date_completed,&quot;(\\d{4})(\\d{2})(\\d{2})$&quot;,&quot;\\1-\\2-\\3&quot;))
 
 # Creating the Date_revised variable using xmlToColumn() function.
 Date_revised &lt;- xmlToColumn(&quot;./DateRevised&quot;)
+
 # Using str_replace() function to add &quot;-&quot; between year, month, and day of DateRevised values. Using as.Date() function to convert the resulting vector into type date and storing the result back in DateRevised.
 Date_revised &lt;- as.Date(str_replace(Date_revised,&quot;(\\d{4})(\\d{2})(\\d{2})$&quot;,&quot;\\1-\\2-\\3&quot;))
 
@@ -376,13 +375,15 @@ Number_of_authors &lt;- xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitatio
 
 # Creating the Publication_type variable using xmlToColumn() function.
 Publication_type &lt;- xmlToColumn(&quot;./Article/PublicationTypeList/PublicationType&quot;)
+
 # Using sapply() function to extract only the first element of all elements in the list Publication_type and storing it back as a vector.
 Publication_type &lt;- sapply(1:length(Publication_type), function(x) Publication_type[[x]][1])
 
 # Creating the Article_title variable using xmlToColumn() function.
 Article_title &lt;- xmlToColumn(&quot;./Article/ArticleTitle&quot;)
-# Using data_frame() function to add the specified variables as columns to the publication tibble.
-(publication &lt;- data_frame(PMID, ISSN, Date_completed, Date_revised, Number_of_authors, Publication_type, Article_title))</code></pre>
+
+# Using tibble() function to add the specified variables as columns to the publication tibble.
+(publication &lt;- tibble(PMID, ISSN, Date_completed, Date_revised, Number_of_authors, Publication_type, Article_title))</code></pre>
 <pre><code>## # A tibble: 177 x 7
 ##       PMID ISSN           Date_completed Date_revised Number_of_authors
 ##      &lt;int&gt; &lt;chr&gt;          &lt;date&gt;         &lt;date&gt;                   &lt;int&gt;
@@ -398,9 +399,10 @@ Article_title &lt;- xmlToColumn(&quot;./Article/ArticleTitle&quot;)
 ## 10 9110943 1059-2725.1996 1996-10-23     2011-11-17                   4
 ## # ... with 167 more rows, and 2 more variables: Publication_type &lt;chr&gt;,
 ## #   Article_title &lt;chr&gt;</code></pre>
-<pre class="r"><code># Creating the Journal tibble:
-
-# Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the Medium of the journals.
+</div>
+<div id="creating-the-journal-tibble" class="section level3">
+<h3>Creating the Journal tibble:</h3>
+<pre class="r"><code># Using xpathSApply() function to set the path to the nodes from pubmed XML document to get the Medium of the journals.
 Medium &lt;- xpathSApply(pubmed, &quot;//PubmedArticle/MedlineCitation&quot;, function(x) {
   # Using length() function with if statement to check if the path exists for getting the Medium from the Journal Issue nodes.
   if(length(xpathSApply(x, &quot;./Article/Journal/JournalIssue&quot;)) != 0) {
@@ -417,16 +419,19 @@ Publication_season &lt;- xmlToColumn(&quot;./Article/Journal/JournalIssue/PubDat
 
 # Creating the Language variable using xmlToColumn() function.
 Language &lt;- xmlToColumn(&quot;./Article/Language&quot;)
+
 # Using sapply() function to extract only the first element of all elements in the variable Language and storing it back as a vector.
 Language &lt;- sapply(1:length(Language), function(x) Language[[x]][1])
 
 # Creating the Journal_title variable using xmlToColumn() function.
 Journal_title &lt;- xmlToColumn(&quot;./Article/Journal/Title&quot;)
 
-# Using data_frame() function to add the specified variables as columns to the journal tibble.  
-journal &lt;- data_frame(ISSN, Medium, Publication_year, Publication_season, Language, Journal_title)
+# Using tibble() function to add the specified variables as columns to the journal tibble.  
+journal &lt;- tibble(ISSN, Medium, Publication_year, Publication_season, Language, Journal_title)
+
 # Removing all the ISSN values which are NA using filter() with substring() function and eliminating the duplicate rows from the journal tibble using the unique() function.
 (journal &lt;- base::unique(filter(journal, substring(ISSN, 1, 2) != &quot;NA&quot;)))</code></pre>
+<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.2</code></pre>
 <pre><code>## # A tibble: 150 x 6
 ##    ISSN   Medium Publication_year Publication_sea~ Language Journal_title 
 ##    &lt;chr&gt;  &lt;chr&gt;  &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt;    &lt;chr&gt;         
@@ -446,6 +451,7 @@ journal &lt;- data_frame(ISSN, Medium, Publication_year, Publication_season, Lan
 <h3>Creating a line graph of the number of publications per year.</h3>
 <pre class="r"><code># Using inner_join() function to join the journal tibble with publication tibble by ISSN variable and associate publication years with their respective Publications.
 lg &lt;- inner_join(publication, journal, by = &quot;ISSN&quot;) 
+
 # Using table() function to get the frequency of publications each year. Converting the table to data frame named linegraph using as.data.frame() function.
 linegraph &lt;- as.data.frame(table(lg$Publication_year))
 
@@ -489,8 +495,10 @@ summarize(publication, &quot;Average Number of Authors&quot; = round(mean(Number
 <h3>What is the shortest and the longest time periods between date completed and date revised? Displaying the time elapsed in days. Only considering the cases where the difference is a positive number.</h3>
 <pre class="r"><code># Calculating the time difference in days between the date revised and date completed.
 timediff &lt;- (publication$Date_revised - publication$Date_completed)
+
 # Using which() function to remove the time difference which is a negative number. 
 timediff &lt;- timediff[timediff &gt; 0]
+
 # Using min() function to get the shortest time periods between date completed and date revised. 
 min(timediff, na.rm = T)</code></pre>
 <pre><code>## Time difference of 4 days</code></pre>
@@ -511,6 +519,7 @@ length(lang)</code></pre>
 <h3>Let’s inspect the abstract text fields from the XML data(not the tibbles created above) and find how many articles contained the words “in vitro”, “drug resistance”, “virus”, “transmission”, “clinical study” in any capitalization in any abstract section. Note:“drug resistance” could be spelled as “drug resistance” or “drug-resistance” or “drug resistant” or “drug resistent”. We’ll use regular expressions to deal with this variation.</h3>
 <pre class="r"><code># Creating the abstract list containing the abstracts for all publications using the xmlToColumn() function. 
 abstract &lt;- xmlToColumn(&quot;./Article/Abstract/AbstractText&quot;)
+
 # Using head() function to examine the first few elements of the list abstract.
 head(abstract)</code></pre>
 <pre><code>## [[1]]

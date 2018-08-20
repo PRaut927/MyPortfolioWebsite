@@ -214,7 +214,296 @@ $(document).ready(function () {
 
 
 <div id="check-out-my-data-analysis-website-entirely-made-from-r-markdowns.-work-in-progress" class="section level3">
-<h3><br /> Check out my Data Analysis Website entirely made from R Markdowns.<br /> <br /> Work in Progress!!!</h3>
+<h3><br /> Check out my Data Analysis Website entirely made from R Markdowns. Work in Progress!!!</h3>
+<p>This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> <a href="https://www.youtube.com/watch?v=8SGif63VW6E">Hadley Wickham’s “dplyr” tutorial at useR 2014</a></p>
+<p>The “dplyr” package created by Hadley Wickham provides a set of easy-to-use functions to efficiently manipulate or tidy datasets in R. For this tutorial, we’ll do some data operations on the flights dataset from the “nycflights13” package.</p>
+<pre class="r"><code># Install the packages &quot;dplyr&quot; and &quot;nycflights13&quot; using the install.packages() function.
+
+library(dplyr) # Loads dplyr package into the R session.
+library(nycflights13) # Loads the flights dataset in R.</code></pre>
+<pre class="r"><code>?flights # Check this out to get familiar with the data descriptions.</code></pre>
+<p>Let’s check the number of observations, variables and variable types in the flights tibble/data frame.</p>
+<pre class="r"><code>str(flights) # Displays the structure of flights tibble. </code></pre>
+<pre><code>## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    336776 obs. of  19 variables:
+##  $ year          : int  2013 2013 2013 2013 2013 2013 2013 2013 2013 2013 ...
+##  $ month         : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ day           : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ dep_time      : int  517 533 542 544 554 554 555 557 557 558 ...
+##  $ sched_dep_time: int  515 529 540 545 600 558 600 600 600 600 ...
+##  $ dep_delay     : num  2 4 2 -1 -6 -4 -5 -3 -3 -2 ...
+##  $ arr_time      : int  830 850 923 1004 812 740 913 709 838 753 ...
+##  $ sched_arr_time: int  819 830 850 1022 837 728 854 723 846 745 ...
+##  $ arr_delay     : num  11 20 33 -18 -25 12 19 -14 -8 8 ...
+##  $ carrier       : chr  &quot;UA&quot; &quot;UA&quot; &quot;AA&quot; &quot;B6&quot; ...
+##  $ flight        : int  1545 1714 1141 725 461 1696 507 5708 79 301 ...
+##  $ tailnum       : chr  &quot;N14228&quot; &quot;N24211&quot; &quot;N619AA&quot; &quot;N804JB&quot; ...
+##  $ origin        : chr  &quot;EWR&quot; &quot;LGA&quot; &quot;JFK&quot; &quot;JFK&quot; ...
+##  $ dest          : chr  &quot;IAH&quot; &quot;IAH&quot; &quot;MIA&quot; &quot;BQN&quot; ...
+##  $ air_time      : num  227 227 160 183 116 150 158 53 140 138 ...
+##  $ distance      : num  1400 1416 1089 1576 762 ...
+##  $ hour          : num  5 5 5 5 6 5 6 6 6 6 ...
+##  $ minute        : num  15 29 40 45 0 58 0 0 0 0 ...
+##  $ time_hour     : POSIXct, format: &quot;2013-01-01 05:00:00&quot; &quot;2013-01-01 05:00:00&quot; ...</code></pre>
+<p>In this tutorial we’ll check out some common dplyr functions like filter(), select(), arrange(), mutate(), and summarize(). Let us begin the analysis by answering the following questions: <br /></p>
+</div>
+<div id="flights-going-to-san-francisco-or-oakland" class="section level3">
+<h3>Flights going to San Francisco or Oakland:</h3>
+<pre class="r"><code>filter(flights, dest %in% c(&quot;SFO&quot; ,&quot;OAK&quot;)) # Using %in% operator to identify if the cities belongs to column dest. The %in% operator is similar to the == relational operator.</code></pre>
+<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.2</code></pre>
+<pre><code>## # A tibble: 13,643 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      558            600    - 2.00      923
+##  2  2013     1     1      611            600     11.0       945
+##  3  2013     1     1      655            700    - 5.00     1037
+##  4  2013     1     1      729            730    - 1.00     1049
+##  5  2013     1     1      734            737    - 3.00     1047
+##  6  2013     1     1      745            745      0        1135
+##  7  2013     1     1      746            746      0        1119
+##  8  2013     1     1      803            800      3.00     1132
+##  9  2013     1     1      826            817      9.00     1145
+## 10  2013     1     1     1029           1030    - 1.00     1427
+## # ... with 13,633 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="flights-made-in-january" class="section level3">
+<h3>Flights made in January:</h3>
+<pre class="r"><code>filter(flights, month == 1)</code></pre>
+<pre><code>## # A tibble: 27,004 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515      2.00      830
+##  2  2013     1     1      533            529      4.00      850
+##  3  2013     1     1      542            540      2.00      923
+##  4  2013     1     1      544            545     -1.00     1004
+##  5  2013     1     1      554            600     -6.00      812
+##  6  2013     1     1      554            558     -4.00      740
+##  7  2013     1     1      555            600     -5.00      913
+##  8  2013     1     1      557            600     -3.00      709
+##  9  2013     1     1      557            600     -3.00      838
+## 10  2013     1     1      558            600     -2.00      753
+## # ... with 26,994 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+<pre class="r"><code># Another way to get flights in January if the month column was absent:
+filter(flights, time_hour &lt; &quot;2013-02-01&quot;) # same result as previous. </code></pre>
+<pre><code>## # A tibble: 27,004 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515      2.00      830
+##  2  2013     1     1      533            529      4.00      850
+##  3  2013     1     1      542            540      2.00      923
+##  4  2013     1     1      544            545     -1.00     1004
+##  5  2013     1     1      554            600     -6.00      812
+##  6  2013     1     1      554            558     -4.00      740
+##  7  2013     1     1      555            600     -5.00      913
+##  8  2013     1     1      557            600     -3.00      709
+##  9  2013     1     1      557            600     -3.00      838
+## 10  2013     1     1      558            600     -2.00      753
+## # ... with 26,994 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="flights-that-departed-between-midnight-and-5-am" class="section level3">
+<h3>Flights that departed between midnight and 5 AM:</h3>
+<pre class="r"><code>filter(flights, hour &gt;= 0 &amp; hour &lt;= 5)</code></pre>
+<pre><code>## # A tibble: 1,954 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515      2.00      830
+##  2  2013     1     1      533            529      4.00      850
+##  3  2013     1     1      542            540      2.00      923
+##  4  2013     1     1      544            545     -1.00     1004
+##  5  2013     1     1      554            558     -4.00      740
+##  6  2013     1     1      559            559      0         702
+##  7  2013     1     2      458            500     -2.00      703
+##  8  2013     1     2      512            515     -3.00      809
+##  9  2013     1     2      535            540     -5.00      831
+## 10  2013     1     2      536            529      7.00      840
+## # ... with 1,944 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="flights-where-arrival-delay-was-twice-as-much-as-departure-delay" class="section level3">
+<h3>Flights where arrival delay was twice as much as departure delay:</h3>
+<pre class="r"><code>filter(flights, arr_delay &gt; (2*dep_delay))</code></pre>
+<pre><code>## # A tibble: 95,224 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515      2.00      830
+##  2  2013     1     1      533            529      4.00      850
+##  3  2013     1     1      542            540      2.00      923
+##  4  2013     1     1      554            558     -4.00      740
+##  5  2013     1     1      555            600     -5.00      913
+##  6  2013     1     1      558            600     -2.00      753
+##  7  2013     1     1      558            600     -2.00      849
+##  8  2013     1     1      558            600     -2.00      853
+##  9  2013     1     1      558            600     -2.00      924
+## 10  2013     1     1      559            600     -1.00      941
+## # ... with 95,214 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="display-the-departure-delay-and-arrival-delay-columns" class="section level3">
+<h3>Display the departure delay and arrival delay columns:</h3>
+<pre class="r"><code>select(flights, dep_delay, arr_delay)</code></pre>
+<pre><code>## # A tibble: 336,776 x 2
+##    dep_delay arr_delay
+##        &lt;dbl&gt;     &lt;dbl&gt;
+##  1      2.00     11.0 
+##  2      4.00     20.0 
+##  3      2.00     33.0 
+##  4     -1.00    -18.0 
+##  5     -6.00    -25.0 
+##  6     -4.00     12.0 
+##  7     -5.00     19.0 
+##  8     -3.00    -14.0 
+##  9     -3.00    - 8.00
+## 10     -2.00      8.00
+## # ... with 336,766 more rows</code></pre>
+</div>
+<div id="which-flights-were-most-delayed-during-departure" class="section level3">
+<h3>Which flights were most delayed during departure?</h3>
+<pre class="r"><code>arrange(flights, desc(dep_delay))</code></pre>
+<pre><code>## # A tibble: 336,776 x 19
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     9      641            900      1301     1242
+##  2  2013     6    15     1432           1935      1137     1607
+##  3  2013     1    10     1121           1635      1126     1239
+##  4  2013     9    20     1139           1845      1014     1457
+##  5  2013     7    22      845           1600      1005     1044
+##  6  2013     4    10     1100           1900       960     1342
+##  7  2013     3    17     2321            810       911      135
+##  8  2013     6    27      959           1900       899     1236
+##  9  2013     7    22     2257            759       898      121
+## 10  2013    12     5      756           1700       896     1058
+## # ... with 336,766 more rows, and 12 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;</code></pre>
+</div>
+<div id="compute-speed-in-mph-from-timein-minutes-and-distancein-miles.-which-flight-flew-the-fastest" class="section level3">
+<h3>Compute speed in mph from time(in minutes) and distance(in miles). Which flight flew the fastest?</h3>
+<pre class="r"><code>mutate(flights, speed = distance/(air_time/60)) %&gt;%
+  arrange(desc(speed)) # The &quot;%&gt;%&quot; (pipe operator) passes resulting data from the command before to the one after. So after adding the new columns, arrange() function will sort the resulting dataframe in descending order.</code></pre>
+<pre><code>## # A tibble: 336,776 x 20
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     5    25     1709           1700      9.00     1923
+##  2  2013     7     2     1558           1513     45.0      1745
+##  3  2013     5    13     2040           2025     15.0      2225
+##  4  2013     3    23     1914           1910      4.00     2045
+##  5  2013     1    12     1559           1600    - 1.00     1849
+##  6  2013    11    17      650            655    - 5.00     1059
+##  7  2013     2    21     2355           2358    - 3.00      412
+##  8  2013    11    17      759            800    - 1.00     1212
+##  9  2013    11    16     2003           1925     38.0        17
+## 10  2013    11    16     2349           2359    -10.0       402
+## # ... with 336,766 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, speed &lt;dbl&gt;</code></pre>
+</div>
+<div id="add-a-new-variable-that-shows-how-much-time-was-made-up-or-lost-in-flight" class="section level3">
+<h3>Add a new variable that shows how much time was made up or lost in flight:</h3>
+<pre class="r"><code>mutate(flights, delta = dep_delay - arr_delay)</code></pre>
+<pre><code>## # A tibble: 336,776 x 20
+##     year month   day dep_time sched_dep_time dep_delay arr_time
+##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
+##  1  2013     1     1      517            515      2.00      830
+##  2  2013     1     1      533            529      4.00      850
+##  3  2013     1     1      542            540      2.00      923
+##  4  2013     1     1      544            545     -1.00     1004
+##  5  2013     1     1      554            600     -6.00      812
+##  6  2013     1     1      554            558     -4.00      740
+##  7  2013     1     1      555            600     -5.00      913
+##  8  2013     1     1      557            600     -3.00      709
+##  9  2013     1     1      557            600     -3.00      838
+## 10  2013     1     1      558            600     -2.00      753
+## # ... with 336,766 more rows, and 13 more variables: sched_arr_time &lt;int&gt;,
+## #   arr_delay &lt;dbl&gt;, carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;,
+## #   origin &lt;chr&gt;, dest &lt;chr&gt;, air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;,
+## #   minute &lt;dbl&gt;, time_hour &lt;dttm&gt;, delta &lt;dbl&gt;</code></pre>
+</div>
+<div id="which-destination-has-the-highest-average-delays" class="section level3">
+<h3>Which destination has the highest average delays?</h3>
+<pre class="r"><code>flights %&gt;%
+  filter(!is.na(arr_delay)) %&gt;%
+  group_by(dest) %&gt;%
+  summarize(Average_delay = mean(arr_delay), cases = n()) %&gt;%
+  filter(cases &gt; 10) %&gt;%
+  arrange(desc(Average_delay))</code></pre>
+<pre><code>## # A tibble: 101 x 3
+##    dest  Average_delay cases
+##    &lt;chr&gt;         &lt;dbl&gt; &lt;int&gt;
+##  1 CAE            41.8   106
+##  2 TUL            33.7   294
+##  3 OKC            30.6   315
+##  4 JAC            28.1    21
+##  5 TYS            24.1   578
+##  6 MSN            20.2   556
+##  7 RIC            20.1  2346
+##  8 CAK            19.7   842
+##  9 DSM            19.0   523
+## 10 GRR            18.2   728
+## # ... with 91 more rows</code></pre>
+</div>
+<div id="which-flightsi.e.carrier-flight-happen-everyday-where-do-they-fly-to" class="section level3">
+<h3>Which flights(i.e. carrier + flight) happen everyday? Where do they fly to?</h3>
+<pre class="r"><code>flights %&gt;%
+  group_by(carrier,flight,dest) %&gt;%
+  summarise(n = n_distinct(time_hour)) %&gt;%
+  filter(n == 365)</code></pre>
+<pre><code>## # A tibble: 18 x 4
+## # Groups:   carrier, flight [18]
+##    carrier flight dest      n
+##    &lt;chr&gt;    &lt;int&gt; &lt;chr&gt; &lt;int&gt;
+##  1 AA          59 SFO     365
+##  2 AA         119 LAX     365
+##  3 AA         181 LAX     365
+##  4 AA        1357 SJU     365
+##  5 AA        1611 MIA     365
+##  6 B6         219 CLT     365
+##  7 B6         359 BUR     365
+##  8 B6         371 FLL     365
+##  9 B6         431 SRQ     365
+## 10 B6         703 SJU     365
+## 11 B6        1783 MCO     365
+## 12 DL        2159 MCO     365
+## 13 DL        2391 TPA     365
+## 14 EV        5712 IAD     365
+## 15 UA          15 HNL     365
+## 16 VX         251 LAS     365
+## 17 VX         407 LAX     365
+## 18 VX         413 LAX     365</code></pre>
+</div>
+<div id="on-average-how-do-delays-vary-over-the-course-of-the-day-hint-hour-minute60" class="section level3">
+<h3>On average, how do delays vary over the course of the day? (Hint: hour + minute/60)</h3>
+<pre class="r"><code>flights %&gt;%
+  group_by(hour, minute) %&gt;%
+  summarize(n = n(), mean = mean(na.omit(dep_delay)))</code></pre>
+<pre><code>## # A tibble: 1,021 x 4
+## # Groups:   hour [?]
+##     hour minute     n     mean
+##    &lt;dbl&gt;  &lt;dbl&gt; &lt;int&gt;    &lt;dbl&gt;
+##  1  1.00   6.00     1  NaN    
+##  2  5.00   0      341 -  3.14 
+##  3  5.00   1.00     1 -  3.00 
+##  4  5.00   5.00     2    2.00 
+##  5  5.00  10.0      5    1.00 
+##  6  5.00  15.0    208    1.53 
+##  7  5.00  16.0      4 -  5.00 
+##  8  5.00  17.0     28    5.11 
+##  9  5.00  20.0      7 -  2.57 
+## 10  5.00  25.0     37 -  0.703
+## # ... with 1,011 more rows</code></pre>
 </div>
 
 

@@ -2,4 +2,99 @@
 title: "Hello, World!"
 ---
 
-### <br /> Check out my Data Analysis Website entirely made from R Markdowns.<br /> <br /> Work in Progress!!!
+### <br /> Check out my Data Analysis Website entirely made from R Markdowns. Work in Progress!!!
+
+This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> 
+[Hadley Wickham's "dplyr" tutorial at useR 2014](https://www.youtube.com/watch?v=8SGif63VW6E)
+
+The "dplyr" package created by Hadley Wickham provides a set of easy-to-use functions to efficiently manipulate or tidy datasets in R. For this tutorial, we'll do some data operations on the flights dataset from the "nycflights13" package.
+
+```{r, warning = F, message = F}
+# Install the packages "dplyr" and "nycflights13" using the install.packages() function.
+
+library(dplyr) # Loads dplyr package into the R session.
+library(nycflights13) # Loads the flights dataset in R.
+```
+
+```{r, warning = F, message = F}
+?flights # Check this out to get familiar with the data descriptions.
+```
+
+Let's check the number of observations, variables and variable types in the flights tibble/data frame.
+```{r}
+str(flights) # Displays the structure of flights tibble. 
+```
+
+In this tutorial we'll check out some common dplyr functions like filter(), select(), arrange(), mutate(), and summarize(). Let us begin the analysis by answering the following questions: <br />
+
+### Flights going to San Francisco or Oakland:
+```{r}
+filter(flights, dest %in% c("SFO" ,"OAK")) # Using %in% operator to identify if the cities belongs to destination column. The %in% operator is similar to the == relational operator.
+```
+
+### Flights made in January:
+```{r}
+filter(flights, month == 1)
+```
+
+```{r}
+# Another way to get flights in January if the month column was absent:
+filter(flights, time_hour < "2013-02-01") # same result as previous. 
+```
+
+### Flights that departed between midnight and 5 AM:
+```{r}
+filter(flights, hour >= 0 & hour <= 5)
+```
+
+### Flights where arrival delay was twice as much as departure delay:
+```{r}
+filter(flights, arr_delay > (2*dep_delay))
+```
+
+### Display the departure delay and arrival delay columns:
+```{r}
+select(flights, dep_delay, arr_delay)
+```
+
+### Which flights were most delayed during departure?
+```{r}
+arrange(flights, desc(dep_delay))
+```
+
+### Compute speed in mph from time(in minutes) and distance(in miles). Which flight flew the fastest?
+```{r}
+mutate(flights, speed = distance/(air_time/60)) %>%
+  arrange(desc(speed)) # The "%>%" (pipe operator) passes resulting data from the command before to the one after. So after adding the new columns, arrange() function will sort the resulting dataframe in descending order.
+```
+
+### Add a new variable that shows how much time was made up or lost in flight:
+```{r}
+mutate(flights, delta = dep_delay - arr_delay)
+```
+
+### Which destination has the highest average delays?
+```{r}
+flights %>%
+  filter(!is.na(arr_delay)) %>%
+  group_by(dest) %>%
+  summarize(Average_delay = mean(arr_delay), cases = n()) %>%
+  filter(cases > 10) %>%
+  arrange(desc(Average_delay))
+```
+
+### Which flights(i.e. carrier + flight) happen everyday? Where do they fly to?
+```{r}
+flights %>%
+  group_by(carrier,flight,dest) %>%
+  summarise(n = n_distinct(time_hour)) %>%
+  filter(n == 365)
+```
+
+### On average, how do delays vary over the course of the day? (Hint: hour + minute/60)
+```{r}
+flights %>%
+  group_by(hour, minute) %>%
+  summarize(n = n(), mean = mean(na.omit(dep_delay)))
+```
+

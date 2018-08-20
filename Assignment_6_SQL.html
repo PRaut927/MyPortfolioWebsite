@@ -216,17 +216,9 @@ $(document).ready(function () {
 <pre class="r"><code># Install the required packages &quot;sqldf&quot; using the install.packages() function.
 # Use the library() function to load these packages into the R session.
 library(sqldf)</code></pre>
-<pre class="r"><code>customer &lt;- read.csv(&quot;customertxndatahead.csv&quot;, stringsAsFactors = F)
-head(customer)</code></pre>
-<pre><code>##   Visits Transactions      OS Gender   Revenue
-## 1      7            0 Android   Male    0.0000
-## 2     20            1     iOS   &lt;NA&gt;  576.8668
-## 3     22            1     iOS Female  850.0000
-## 4     24            2     iOS Female 1050.0000
-## 5      1            0 Android   Male    0.0000
-## 6     13            1 Android   Male  460.0000</code></pre>
-<div id="creating-a-table-named-transactions-in-that-matches-the-csv-column-name-and-order-must-match." class="section level3">
-<h3>Creating a table named transactions in that matches the CSV (column name and order must match).</h3>
+<pre class="r"><code>customer &lt;- read.csv(&quot;customertxndatahead.csv&quot;, stringsAsFactors = F) # Importing data from a CSV file into the dataframe named customer.</code></pre>
+<div id="using-the-select-statement-from-sql-to-display-the-first-few-rows-of-the-customer-dataset." class="section level3">
+<h3>Using the SELECT statement from SQL to display the first few rows of the customer dataset.</h3>
 <pre class="r"><code>sqldf(&quot;SELECT * FROM customer 
 LIMIT 10;&quot;)</code></pre>
 <pre><code>##    Visits Transactions      OS Gender   Revenue
