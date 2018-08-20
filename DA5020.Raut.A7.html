@@ -240,12 +240,12 @@ bostonburgers &lt;- map_df(c(0, 30, 60), function(i) {
 <pre class="r"><code># Using head() function to display the first 10 rows of the yelpburgers data frame.
 head(bostonburgers)</code></pre>
 <pre><code>##   Row_id                 RestaurantName   ReviewCount
-## 1      1                   Tasty Burger  997 reviews 
-## 2      2                    Wahlburgers  546 reviews 
-## 3      3                    Shake Shack  314 reviews 
+## 1      1                   Tasty Burger  999 reviews 
+## 2      2                    Wahlburgers  548 reviews 
+## 3      3                    Shake Shack  316 reviews 
 ## 4      4                        UBurger  154 reviews 
-## 5      5                    The Gallows  789 reviews 
-## 6      6 MOOYAH Burgers, Fries &amp; Shakes   36 reviews 
+## 5      5                    The Gallows  790 reviews 
+## 6      6 MOOYAH Burgers, Fries &amp; Shakes   39 reviews 
 ##                                              ServiceCategories
 ## 1                                Burgers, Hot Dogs, Fast Food 
 ## 2                             American (Traditional), Burgers 
@@ -262,15 +262,20 @@ head(bostonburgers)</code></pre>
 ## 6         140 Tremont St     4.0 star rating</code></pre>
 <pre class="r"><code># Using write.csv() function to export the scraped data to a csv file named &quot;rvest.csv&quot;. 
 write.csv(bostonburgers, file = &quot;YelpBostonBurgers.csv&quot;, row.names = F)</code></pre>
-<p>What are the average reviews stars for all the restaurants?</p>
+</div>
+<div id="what-are-the-average-reviews-stars-for-all-the-restaurants" class="section level3">
+<h3>What are the average reviews stars for all the restaurants?</h3>
 <pre class="r"><code># Using gsub() function to remove the additional string &quot; star rating&quot; from the AverageReviewStars column. Converting the result to numeric using the as.numeric() function.
 bostonburgers$AverageReviewStars &lt;- as.numeric(gsub(&quot; star rating&quot;, &quot;&quot;, bostonburgers$AverageReviewStars))
 
 # Using mean() function to calculate the average review stars for all restaurants.
 mean(bostonburgers$AverageReviewStars)</code></pre>
-<pre><code>## [1] 3.694444</code></pre>
-<p>What are the top 5 restaurants serving good burgers in Boston?</p>
-<pre class="r"><code>arrange(bostonburgers, desc(AverageReviewStars)) %&gt;%
+<pre><code>## [1] 3.677778</code></pre>
+</div>
+<div id="what-are-the-top-5-restaurants-serving-good-burgers-in-boston" class="section level3">
+<h3>What are the top 5 restaurants serving good burgers in Boston?</h3>
+<pre class="r"><code># Using first arrange() function to order by the highest review stars and the second arrange() to order by the highest review count(More customers reviews + Higher review stars = More Popular restaurant).
+arrange(bostonburgers, desc(AverageReviewStars)) %&gt;%
   arrange(desc(ReviewCount)) %&gt;%
   select(RestaurantName, Address, AverageReviewStars, ReviewCount) %&gt;%
   head(n = 5)</code></pre>
@@ -281,12 +286,14 @@ mean(bostonburgers$AverageReviewStars)</code></pre>
 ## 4 Cheeky Monkey Brewing    3 Lansdowne St                 3.0
 ## 5           The Bullpen  19-21 Yawkey Way                 4.0
 ##     ReviewCount
-## 1  997 reviews 
+## 1  999 reviews 
 ## 2   94 reviews 
 ## 3   94 reviews 
 ## 4   93 reviews 
 ## 5    9 reviews</code></pre>
-<p>Which restaurant has the lowest ratings?</p>
+</div>
+<div id="which-restaurant-has-the-lowest-rating" class="section level3">
+<h3>Which restaurant has the lowest rating?</h3>
 <pre class="r"><code># Using filter() function to determine the restaurant which has the lowest rating from the burgers data frame.
 filter(bostonburgers, AverageReviewStars == min(AverageReviewStars)) %&gt;%
   # Using select() function to display the columns containing the restaurant name, review count, address and the lowest rating. 

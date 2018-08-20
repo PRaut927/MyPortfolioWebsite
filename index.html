@@ -215,7 +215,7 @@ $(document).ready(function () {
 
 <div id="check-out-my-data-analysis-website-entirely-made-from-r-markdowns.-work-in-progress" class="section level3">
 <h3><br /> Check out my Data Analysis Website entirely made from R Markdowns. Work in Progress!!!</h3>
-<p>This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> <a href="https://www.youtube.com/watch?v=8SGif63VW6E">Hadley Wickham’s “dplyr” tutorial at useR 2014</a></p>
+<p>This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> <a href="https://www.youtube.com/watch?v=8SGif63VW6E" target="_blank">Hadley Wickham’s “dplyr” tutorial at useR 2014</a></p>
 <p>The “dplyr” package created by Hadley Wickham provides a set of easy-to-use functions to efficiently manipulate or tidy datasets in R. For this tutorial, we’ll do some data operations on the flights dataset from the “nycflights13” package.</p>
 <pre class="r"><code># Install the packages &quot;dplyr&quot; and &quot;nycflights13&quot; using the install.packages() function.
 
@@ -248,8 +248,7 @@ library(nycflights13) # Loads the flights dataset in R.</code></pre>
 </div>
 <div id="flights-going-to-san-francisco-or-oakland" class="section level3">
 <h3>Flights going to San Francisco or Oakland:</h3>
-<pre class="r"><code>filter(flights, dest %in% c(&quot;SFO&quot; ,&quot;OAK&quot;)) # Using %in% operator to identify if the cities belongs to column dest. The %in% operator is similar to the == relational operator.</code></pre>
-<pre><code>## Warning: package &#39;bindrcpp&#39; was built under R version 3.4.2</code></pre>
+<pre class="r"><code>filter(flights, dest %in% c(&quot;SFO&quot; ,&quot;OAK&quot;)) # Using %in% operator to identify if the cities belongs to destination column. The %in% operator is similar to the == relational operator.</code></pre>
 <pre><code>## # A tibble: 13,643 x 19
 ##     year month   day dep_time sched_dep_time dep_delay arr_time
 ##    &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;
@@ -437,7 +436,7 @@ filter(flights, time_hour &lt; &quot;2013-02-01&quot;) # same result as previous
 <pre class="r"><code>flights %&gt;%
   filter(!is.na(arr_delay)) %&gt;%
   group_by(dest) %&gt;%
-  summarize(Average_delay = mean(arr_delay), cases = n()) %&gt;%
+  dplyr::summarize(Average_delay = mean(arr_delay), cases = n()) %&gt;%
   filter(cases &gt; 10) %&gt;%
   arrange(desc(Average_delay))</code></pre>
 <pre><code>## # A tibble: 101 x 3
@@ -459,7 +458,7 @@ filter(flights, time_hour &lt; &quot;2013-02-01&quot;) # same result as previous
 <h3>Which flights(i.e. carrier + flight) happen everyday? Where do they fly to?</h3>
 <pre class="r"><code>flights %&gt;%
   group_by(carrier,flight,dest) %&gt;%
-  summarise(n = n_distinct(time_hour)) %&gt;%
+  dplyr::summarize(n = n_distinct(time_hour)) %&gt;%
   filter(n == 365)</code></pre>
 <pre><code>## # A tibble: 18 x 4
 ## # Groups:   carrier, flight [18]
@@ -488,7 +487,7 @@ filter(flights, time_hour &lt; &quot;2013-02-01&quot;) # same result as previous
 <h3>On average, how do delays vary over the course of the day? (Hint: hour + minute/60)</h3>
 <pre class="r"><code>flights %&gt;%
   group_by(hour, minute) %&gt;%
-  summarize(n = n(), mean = mean(na.omit(dep_delay)))</code></pre>
+  dplyr::summarize(n = n(), mean = mean(na.omit(dep_delay)))</code></pre>
 <pre><code>## # A tibble: 1,021 x 4
 ## # Groups:   hour [?]
 ##     hour minute     n     mean

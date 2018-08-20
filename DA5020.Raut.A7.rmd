@@ -45,8 +45,7 @@ head(bostonburgers)
 write.csv(bostonburgers, file = "YelpBostonBurgers.csv", row.names = F)
 ```
 
-What are the average reviews stars for all the restaurants?
-
+### What are the average reviews stars for all the restaurants?
 ```{r}
 # Using gsub() function to remove the additional string " star rating" from the AverageReviewStars column. Converting the result to numeric using the as.numeric() function.
 bostonburgers$AverageReviewStars <- as.numeric(gsub(" star rating", "", bostonburgers$AverageReviewStars))
@@ -55,17 +54,16 @@ bostonburgers$AverageReviewStars <- as.numeric(gsub(" star rating", "", bostonbu
 mean(bostonburgers$AverageReviewStars)
 ```
 
-What are the top 5 restaurants serving good burgers in Boston?
-
+### What are the top 5 restaurants serving good burgers in Boston?
 ```{r}
+# Using first arrange() function to order by the highest review stars and the second arrange() to order by the highest review count(More customers reviews + Higher review stars = More Popular restaurant).
 arrange(bostonburgers, desc(AverageReviewStars)) %>%
   arrange(desc(ReviewCount)) %>%
   select(RestaurantName, Address, AverageReviewStars, ReviewCount) %>%
   head(n = 5)
 ```
 
-Which restaurant has the lowest ratings?
-
+### Which restaurant has the lowest rating?
 ```{r}
 # Using filter() function to determine the restaurant which has the lowest rating from the burgers data frame.
 filter(bostonburgers, AverageReviewStars == min(AverageReviewStars)) %>%

@@ -4,8 +4,7 @@ title: "Hello, World!"
 
 ### <br /> Check out my Data Analysis Website entirely made from R Markdowns. Work in Progress!!!
 
-This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> 
-[Hadley Wickham's "dplyr" tutorial at useR 2014](https://www.youtube.com/watch?v=8SGif63VW6E)
+This is a short tutorial I made from the video tutorial on the dplyr package by Hadley Wickham. The link for the video tutorial:<br /> <a href="https://www.youtube.com/watch?v=8SGif63VW6E" target="_blank">Hadley Wickham's "dplyr" tutorial at useR 2014</a>
 
 The "dplyr" package created by Hadley Wickham provides a set of easy-to-use functions to efficiently manipulate or tidy datasets in R. For this tutorial, we'll do some data operations on the flights dataset from the "nycflights13" package.
 
@@ -78,7 +77,7 @@ mutate(flights, delta = dep_delay - arr_delay)
 flights %>%
   filter(!is.na(arr_delay)) %>%
   group_by(dest) %>%
-  summarize(Average_delay = mean(arr_delay), cases = n()) %>%
+  dplyr::summarize(Average_delay = mean(arr_delay), cases = n()) %>%
   filter(cases > 10) %>%
   arrange(desc(Average_delay))
 ```
@@ -87,7 +86,7 @@ flights %>%
 ```{r}
 flights %>%
   group_by(carrier,flight,dest) %>%
-  summarise(n = n_distinct(time_hour)) %>%
+  dplyr::summarize(n = n_distinct(time_hour)) %>%
   filter(n == 365)
 ```
 
@@ -95,6 +94,6 @@ flights %>%
 ```{r}
 flights %>%
   group_by(hour, minute) %>%
-  summarize(n = n(), mean = mean(na.omit(dep_delay)))
+  dplyr::summarize(n = n(), mean = mean(na.omit(dep_delay)))
 ```
 

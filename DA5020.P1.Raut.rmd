@@ -14,7 +14,7 @@ library(tidyverse)
 library(plyr)
 ```
 
-We'll be working with a sample of <a href="ftp://ftp.ncbi.nlm.nih.gov/pubmed/baseline-2018-sample/" target="_blank">MEDLINE/PubMed</a> publication data obtained from the National Institute of Health (NIH) [website](https://www.nlm.nih.gov/databases/download/pubmed_medline.html).
+We'll be working with a sample of <a href="ftp://ftp.ncbi.nlm.nih.gov/pubmed/baseline-2018-sample/" target="_blank">MEDLINE/PubMed</a> publication data obtained from the National Institute of Health (NIH) <a href="https://www.nlm.nih.gov/databases/download/pubmed_medline.html" target="_blank">website</a>.
 
 ### Parsing the downloaded XML file. Explore the pubmed data by examining it's first node:
 ```{r Task 1.b}
